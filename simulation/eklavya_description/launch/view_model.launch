@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="front_laser" default="true" />
+
+  <!-- Standalone launcher to visualize the robot model. -->
+  <include file="$(find eklavya_description)/launch/description.launch">
+    <arg name="front_laser" value="$(arg front_laser)" />
+  </include>
+
+  <param name="use_gui" value="true" />
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find eklavya_description)/rviz/model.rviz" />
+</launch>

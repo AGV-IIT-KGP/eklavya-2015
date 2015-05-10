@@ -1,0 +1,252 @@
+<?xml version="1.0"?>
+<robot name="eklavya" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Included URDF/XACRO Files -->
+  <xacro:include filename="$(find eklavya_description)/urdf/parts/materials.urdf.xacro" />
+  <xacro:include filename="$(find eklavya_description)/urdf/parts/wheel.urdf.xacro" />
+  <xacro:include filename="$(find eklavya_description)/urdf/parts/parts.urdf.xacro" />
+
+  <xacro:include filename="$(find eklavya_description)/urdf/sensors/kinect.urdf.xacro" />
+  <xacro:include filename="$(find eklavya_description)/urdf/sensors/multicamera.urdf.xacro" />
+  <xacro:include filename="$(find eklavya_description)/urdf/sensors/imu.urdf.xacro" />
+  <xacro:include filename="$(find eklavya_description)/urdf/sensors/gps.urdf.xacro" />
+  <xacro:include filename="$(find eklavya_description)/urdf/sensors/sick_lms100_laser.urdf.xacro" />
+  <xacro:include filename="$(find eklavya_description)/urdf/sensors/hokuyo_lx30_laser.urdf.xacro" />
+  <!-- <xacro:include filename="$(find eklavya_description)/urdf/sensors/microstrain_3dmgx2_imu.urdf.xacro" /> -->
+  
+  <!-- PROPERTY LIST -->
+  <property name="M_PI" value="3.1415926535897931" />
+
+  <!-- Location of center of mass. -->
+  <property name="base_x_com" value="-0.08748000" />
+  <property name="base_y_com" value="-0.00085000" />
+  <property name="base_z_com" value="0.09947000" />
+
+  <!-- Size of the base. -->
+  <property name="base_x_size" value="0.98740000" />
+  <property name="base_y_size" value="0.57090000" />
+  <property name="base_z_size" value="0.24750000" />
+
+  <!-- Weight of the base, kg. -->
+  <property name="base_mass" value="33.45489000" />
+
+  <!-- Inertial values for the base at center of mass, aligned with coordinate system. Units are kg*m^2 -->
+  <property name="base_ixx_com_cs" value="0.60216370" />
+  <property name="base_ixy_com_cs" value="-0.02364198" />
+  <property name="base_ixz_com_cs" value="-0.11972132" />
+  <property name="base_iyy_com_cs" value="1.73859574" />
+  <property name="base_iyz_com_cs" value="-0.00154437" />
+  <property name="base_izz_com_cs" value="2.02955229" />
+
+
+<!-- BASE-FOOTPRINT -->
+    <!-- base_footprint is a fictitious link(frame) that is on the ground right below base_link origin, navigation stack depends on this frame -->
+    <link name="base_footprint">
+        <!-- Removing inertial tag due to warning:
+        The root link base_footprint has an inertia specified in the URDF, 
+        but KDL does not support a root link with an inertia. 
+        As a workaround, you can add an extra dummy link to your URDF. -->
+        <!--
+        <inertial>
+            <mass value="0.0001" />
+            <origin xyz="0 0 0" />
+            <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+                iyy="0.0001" iyz="0.0" 
+                izz="0.0001" />
+        </inertial>
+        -->
+
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+    </link>
+
+    <gazebo reference="base_footprint">
+        <turnGravityOff>false</turnGravityOff>
+    </gazebo>
+
+    <joint name="base_footprint_joint" type="fixed">
+		<origin xyz="0 0 ${wheel_x_size/2 - base_z_origin_to_wheel_origin}" rpy="0 0 0" />
+        <parent link="base_footprint"/>
+        <child link="base_link" />
+    </joint>
+    
+  <!-- Root node is the body of the robot. -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://eklavya_description/meshes/base_link.stl" />
+      </geometry>
+      <material name="Yellow" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${wheel_x_size/2 - base_z_origin_to_wheel_origin - 0.02}" rpy="0 0 0" />
+      <geometry>
+        <!-- Make collision box slightly bigger in x and z directions. -->
+        <box size = "${base_x_size+0.02} ${base_y_size} ${base_z_size + 0.02}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- KDL can't have inertia on the base_link, so move it to this separate link. -->
+  <link name="base_inertia">
+    <inertial>
+      <mass value="${base_mass}" />
+      <!-- This is the pose of the inertial reference frame, relative to the link reference frame. The origin of the inertial reference frame needs to be at the center of gravity. The axes of the inertial reference frame do not need to be aligned with the principal axes of the inertia.-->
+      <origin xyz="${base_x_com} ${base_y_com} ${base_z_com}" />
+      <inertia ixx="${base_ixx_com_cs}" ixy="${base_ixy_com_cs}" ixz="${base_ixz_com_cs}"
+               iyy="${base_iyy_com_cs}" iyz="${base_iyz_com_cs}" izz="${base_izz_com_cs}" />
+    </inertial>
+  </link>
+
+  <joint name="base_inertia_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="base_inertia" />
+  </joint>
+
+  <gazebo reference="base_link">
+    <material>Gazebo/Yellow</material>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+  <!-- WHEEL macros -->
+  <eklavya_wheel fb="back" lr="left" parent="base_link" translateX="-1" translateY="1" flipY="-1"/>
+  <eklavya_wheel fb="back" lr="right" parent="base_link" translateX="-1" translateY="-1" flipY="-1"/>
+  <eklavya_wheel fb="front" lr="left" parent="base_link" translateX="1" translateY="1" flipY="-1"/>
+  <eklavya_wheel fb="front" lr="right" parent="base_link" translateX="1" translateY="-1" flipY="-1"/>
+
+
+  <!-- User Rail -->
+  <xacro:eklavya_part parent="base_link" name="user_rail" mesh="user_rail"
+        colour="DarkGray"
+        translateX="0.272" translateY="0.0" translateZ="0.245"
+        rotateX="0.0" rotateY="0.0" rotateZ="0.0"/>
+  <gazebo reference="base_link_user_rail_part">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+
+  <gazebo>
+    <plugin name="eklavya_diff_controller" filename="libeklavya_gazebo_plugins.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>100.0</updateRate>
+      <backLeftJoint>joint_back_left_wheel</backLeftJoint>
+      <backRightJoint>joint_back_right_wheel</backRightJoint>
+      <frontLeftJoint>joint_front_left_wheel</frontLeftJoint>
+      <frontRightJoint>joint_front_right_wheel</frontRightJoint>
+      <wheelSeparation>${base_y_size}</wheelSeparation>
+      <wheelDiameter>${wheel_x_size}</wheelDiameter>
+      <torque>35</torque>	
+    </plugin>
+  </gazebo>
+ 
+  <gazebo>
+   <plugin name='eklavya_groundtruth_sim' filename='libgazebo_ros_p3d.so'>
+      <updateRate>100.0</updateRate>
+      <topicName>ground_truth/odom</topicName>
+      <gaussianNoise>0.001</gaussianNoise>
+      <frameName>world</frameName>
+      <alwaysOn>true</alwaysOn>
+      <bodyName>base_footprint</bodyName>
+      <xyzOffset>0 0 0</xyzOffset>
+      <rpyOffset>0 0 0</rpyOffset>
+ </plugin>
+</gazebo>
+  <xacro:if value="$(arg imu_enabled)">
+    <sensor_imu parent="base_link" name="imu" colour="Blue" imu_px="0.192" imu_py="0.0" imu_pz="${0.01}" imu_or="0.0" imu_op="${-M_PI/2.0}" imu_oy="0.0" />
+    <gazebo reference="imu_link">
+        <material>Gazebo/Blue</material>
+    </gazebo>
+  </xacro:if>
+
+  <xacro:if value="$(arg gps_enabled)">
+   <!-- <xacro:gps_sensor name="gps" parent="base_link_user_rail_part" gps_topic="gps/fix" velocity_topic="gps/vel"  lat_ref="$(arg lat)"  lon_ref="$(arg lon)" head_ref="$(arg head)" />-->
+    <eklavya_rail_mods parent="base_link_user_rail_part" name="fei_gps_rail" mesh="tslot_200x20x20.dae"
+          colour="DarkGrey"
+          translateX="-0.35" translateY="0.20" translateZ="0.1" 
+          rotateX="0.0" rotateY="0.0" rotateZ="0.0" dimX="0.02" dimY="0.02" dimZ="0.2" />
+    <gazebo reference="base_link_user_rail_part_fei_gps_rail_part">
+        <material>Gazebo/Grey</material>
+    </gazebo>
+ 
+    <!-- GPS antenna/module -->
+    <sensor_gps parent="base_link_user_rail_part_fei_gps_rail_part" name="gps"
+          colour="White"
+          gps_px="0" 
+          gps_py="0" 
+          gps_pz="0.14" 
+          gps_or="0.0" 
+          gps_op="0.0" 
+          gps_oy="${M_PI}" 
+          dimX="0.16" dimY="0.16" dimZ="0.14"
+          lat_ref="$(arg lat)"
+          lon_ref="$(arg lon)"
+          head_ref="$(arg head)" />
+    <gazebo reference="gps_link">
+        <material>Gazebo/White</material>
+    </gazebo>
+  
+  </xacro:if>
+
+  <xacro:if value="$(arg front_laser)">
+<!--
+   <hokuyo_lx30_laser_v0 name="hokuyo_lx30_laser"
+    ros_topic="scan" update_rate="10" min_angle="-100" max_angle="100" max_range="10" 
+    parent="base_link_user_rail_part" >
+      <origin xyz="0 0 0" rpy="1.575 0 0" />
+    </hokuyo_lx30_laser_v0>
+    -->
+    
+    <!-- Sick LMS100 support holder -->
+    <eklavya_rail_mods parent="base_link_user_rail_part" name="lms100_support" 
+            mesh="sensors/LMS100_support_holder.dae" colour="DarkGrey"
+             translateX="0.06" translateY="0.0" translateZ="0.02" 
+          rotateX="0.0" rotateY="0.0" rotateZ="0.0" dimX="0.02" dimY="0.02" dimZ="0.1" />
+    <gazebo reference="base_link_user_rail_part_lms100_support_part">
+        <material>Gazebo/Grey</material>
+    </gazebo>
+ 
+
+    <sick_lms100_laser name="laser" parent="base_link_user_rail_part_lms100_support_part" laser_px="0.0" laser_py="0.0" laser_pz="0.046" laser_or="0" laser_op="0.0" laser_oy="0" />
+   </xacro:if>
+   
+    <xacro:if value="$(arg camera_enabled)">
+   <!-- FEI-modded vertical-camera rail -->
+    <eklavya_rail_mods parent="base_footprint" name="fei_cam_rail" mesh="tslot_300x20x20.dae"
+          colour="DarkGrey"
+          translateX="-0.15" translateY="0.0" translateZ="${0.151 + 0.245 + wheel_x_size/2 - base_z_origin_to_wheel_origin}" 
+          rotateX="0.0" rotateY="0.0" rotateZ="0.0" dimX="0.02" dimY="0.02" dimZ="0.3" />
+    <gazebo reference="base_footprint_fei_cam_rail_part">
+        <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <!-- FEI-modded 3D sensor cam_pz: 0.151 works well too, but must change rail -->
+    <sensor_kinect name="camera" parent="base_link" cam_px="-0.151" cam_py="0.0" cam_pz="${0.191 + 0.245 + wheel_x_size/2 - base_z_origin_to_wheel_origin}" cam_or="0.0" cam_op="0.0" cam_oy="0.0" />
+
+    <!-- FEI-modded vertical-stereo-camera rail -->
+    <eklavya_rail_mods parent="base_footprint" name="fei_stereo_rail" mesh="tslot_500x20x20.dae"
+          colour="DarkGrey"
+          translateX="-0.24" translateY="0.0" translateZ="${0.241 + 0.245 + wheel_x_size/2 - base_z_origin_to_wheel_origin}" 
+          rotateX="0.0" rotateY="0.0" rotateZ="0.0" dimX="0.02" dimY="0.02" dimZ="0.5" />
+    <gazebo reference="base_footprint_fei_stereo_rail_part">
+        <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <!-- FEI-modded multicamera sensor -->
+    <sensor_multicamera name="stereo_camera" parent="base_link" baseline="0.062" colour="Red" cam_px="-0.24" cam_py="0.0" cam_pz="${0.361 + 0.245 + wheel_x_size/2 - base_z_origin_to_wheel_origin}" cam_or="0.0" cam_op="0.0" cam_oy="0.0" />
+    <gazebo reference="stereo_camera_link">
+        <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="left_camera_frame">
+        <material>Gazebo/Black</material>
+    </gazebo>
+    <gazebo reference="right_camera_frame">
+        <material>Gazebo/Black</material>
+    </gazebo>
+     </xacro:if>
+</robot>

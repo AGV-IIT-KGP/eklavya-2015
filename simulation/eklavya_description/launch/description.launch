@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="front_laser" default="true" />
+  <arg name="imu_enabled" default="true" />
+  <arg name="gps_enabled" default="true" />
+  <arg name="camera_enabled" default="true" />
+
+  <arg name="lat_ref" default="22.3210431"/>
+  <arg name="lon_ref" default="87.3112864"/>
+  
+  
+  <arg name="base_urdf" default="$(find eklavya_description)/urdf/base.urdf.xacro" />
+
+  <param name="robot_description"
+         command="$(find xacro)/xacro.py '$(arg base_urdf)'
+                                         imu_enabled:=$(arg imu_enabled)
+                                         gps_enabled:=$(arg gps_enabled)
+                                         front_laser:=$(arg front_laser)
+                                         camera_enabled:=$(arg camera_enabled)
+                                         lat:=$(arg lat_ref)
+                                         lon:=$(arg lon_ref)
+                                         head:=0.0" />
+ <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+        <param name="publish_frequency" type="double" value="30.0" />
+    </node>
+</launch>
