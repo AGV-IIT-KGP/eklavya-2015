@@ -1,0 +1,5 @@
+<launch>    
+  <node pkg="eklavya_interactive_markers" name="interactive_markers" type="eklavya_interactive_markers_server">
+    <remap from="cmd_vel" to="eklavya/cmd_vel"/>
+  </node>
+</launch>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Launch file to view a Eklavya in the odom frame and control it using interactive markers -->
+  <arg name="config" default="robot" />
+<!--
+  <node pkg="interactive_marker_twist_server" type="marker_server" name="twist_marker_server">
+    <remap from="twist_marker_server/cmd_vel" to="/cmd_vel" />
+  </node>-->
+  
+ <node pkg="eklavya_interactive_markers" name="interactive_markers" type="marker_server" />
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find eklavya_launch)/rviz/$(arg config).rviz" />
+</launch>

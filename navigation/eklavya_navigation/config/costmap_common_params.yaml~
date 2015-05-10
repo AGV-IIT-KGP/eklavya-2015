@@ -1,0 +1,23 @@
+footprint: [[-0.5, -0.33], [-0.5, 0.33], [0.5, 0.33], [0.5, -0.33]]
+obstacle_layer:
+   observation_sources: scan
+   scan: 
+#      sensor_frame: /laser
+      data_type: LaserScan
+      topic: /scan
+      marking: true
+      clearing: true
+      expected_update_rate: 0.20
+   obstacle_range: 9.0
+   raytrace_range: 10.0
+   enabled: true
+
+inflation_layer:
+   inflation_radius: 2.6
+   enabled: true
+
+footprint_layer:
+   enabled: true
+
+sonar_layer:
+   enabled: true

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package>
+  <name>eklavya_launch</name>
+  <version>0.0.1</version>
+  <description>Main Launch files for Eklavya 2015</description>
+
+  <maintainer email="jit.ray.c@gmail.com">Jit Ray Chowdhury</maintainer>
+
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roslaunch</build_depend>
+  <run_depend>eklavya_description</run_depend>
+  <run_depend>interactive_marker_twist_server</run_depend>
+  <run_depend>rviz</run_depend>
+
+  <export>
+  </export>
+</package>
