@@ -4,6 +4,8 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/Float64.h>
 #include <cmath>
+#include <tf/transform_datatypes.h>
+
 int iterations;
 double reference_heading;
 int map_size = 1000;
@@ -65,10 +67,19 @@ geometry_msgs::PoseStamped convert_Pose2D_to_PoseStamped(geometry_msgs::Pose2D p
     pose_stamp.pose.position.y=pose2d.y;
     pose_stamp.pose.position.z=0;
 
-    pose_stamp.pose.orientation.x=cos(pose2d.theta/2);
+    tf::Quaternion frame_quat;
+    frame_quat=tf::createQuaternionFromYaw(pose2d.theta);
+
+    pose_stamp.pose.orientation.x=frame_quat.x();
+    pose_stamp.pose.orientation.y=frame_quat.y();
+    pose_stamp.pose.orientation.z=frame_quat.z();
+    pose_stamp.pose.orientation.w=frame_quat.w();
+
+
+    /*pose_stamp.pose.orientation.x=cos(pose2d.theta/2);
     pose_stamp.pose.orientation.y=0;
     pose_stamp.pose.orientation.z=0;
-    pose_stamp.pose.orientation.w=sin(pose2d.theta/2);
+    pose_stamp.pose.orientation.w=sin(pose2d.theta/2);*/
     return pose_stamp;
 }
 void publishTarget(const std_msgs::Float64::ConstPtr yaw_msg) {

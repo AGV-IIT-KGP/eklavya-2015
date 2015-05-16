@@ -17,6 +17,7 @@
 #include <std_msgs/Float64.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/String.h>
+ #include <tf/transform_datatypes.h>
 
 static const int buffer_size = 10;
 static const int loop_rate_hz = 10;
