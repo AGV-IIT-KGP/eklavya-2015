@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-    <param name="base_global_planner" value="ompl_global_planner/OmplGlobalPlanner"/>
+    <param name="base_global_planner" value="OmplGlobalPlanner"/>
     <rosparam file="$(find eklavya_navigation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find eklavya_navigation)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
     <rosparam file="$(find eklavya_navigation)/config/local_costmap_params.yaml" command="load" />
