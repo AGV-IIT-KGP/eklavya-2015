@@ -3,6 +3,7 @@
 <launch>
     <node pkg="waypoint_selector" type="waypoint_recorder" name="waypoint_recorder" args="" output="screen" cwd="node">
         <param name="data_file" type="str" value="$(find waypoint_selector)/data/.count.dat"/>
-        <param name="record_file_folder" type="str" value="../data/"/>                      
+        <param name="record_file_folder" type="str" value="$(find waypoint_selector)/data/"/>  
+        <remap from="vn_ins/fix" to="gps/fix" />                   
     </node>
 </launch>
