@@ -4,7 +4,7 @@
   <arg name="drive_speed" default="0.7" />
   <arg name="turn_speed" default="1.5" />
   <arg name="run_speed" default="0.7" />
-  <arg name="cmd_topic" default="/eklavya/cmd_vel" />
+  <arg name="cmd_topic" default="cmd_vel" />
      
   <!-- <group ns="$(arg name)"> -->
     <node pkg="eklavya_teleop" type="keyboard_teleop" name="ekalvya_keyboard" output="screen">
