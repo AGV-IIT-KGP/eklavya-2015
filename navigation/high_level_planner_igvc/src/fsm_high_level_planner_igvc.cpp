@@ -27,108 +27,108 @@ Strategy_Planner strategy_planner;
 
 FSM(High_Level_Planner)
 {
-	enum STATES
-	{
-		start,
-		test_mode,
-		non_test_mode,
-		test_lane_navigator,
-		test_waypoint_navigator,
-		test_nose_navigator,
-		non_test_lane_navigator,
-		non_test_waypoint_navigator
-	}
+    enum STATES
+    {
+        start,
+        test_mode,
+        non_test_mode,
+        test_lane_navigator,
+        test_waypoint_navigator,
+        test_nose_navigator,
+        non_test_lane_navigator,
+        non_test_waypoint_navigator
+    }
 
-	FSM_START(start);
-	FSM_BGN
-	{
-		FSM_STATE(start)
-		{
-			FSM_TRANSITIONS
-			{
-				FSM_ON_CONDITION( is_test_mode , FSM_NEXT(test_mode) );
-				FSM_ON_CONDITION(!is_test_mode ,FSM_NEXT(non_test_mode));
-			}
-		}
+    FSM_START(start);
+    FSM_BGN
+    {
+        FSM_STATE(start)
+        {
+            FSM_TRANSITIONS
+            {
+                FSM_ON_CONDITION( is_test_mode , FSM_NEXT(test_mode) );
+                FSM_ON_CONDITION(!is_test_mode ,FSM_NEXT(non_test_mode));
+            }
+        }
 
-		FSM_STATE(test_mode)
-		{
-			FSM_TRANSITIONS
-			{
-				FSM_ON_CONDITION(navigator == nose_navigator && is_test_mode==1, FSM_NEXT(test_nose_navigator));
-				FSM_ON_CONDITION(navigator == lane_navigator && is_test_mode==1, FSM_NEXT(test_lane_navigator));
-				FSM_ON_CONDITION(navigator == waypoint_navigator && is_test_mode==1, FSM_NEXT(test_waypoint_navigator));
-			}			
-		}
+        FSM_STATE(test_mode)
+        {
+            FSM_TRANSITIONS
+            {
+                FSM_ON_CONDITION(navigator == nose_navigator && is_test_mode==1, FSM_NEXT(test_nose_navigator));
+                FSM_ON_CONDITION(navigator == lane_navigator && is_test_mode==1, FSM_NEXT(test_lane_navigator));
+                FSM_ON_CONDITION(navigator == waypoint_navigator && is_test_mode==1, FSM_NEXT(test_waypoint_navigator));
+            }           
+        }
 
-		FSM_STATE(test_nose_navigator)
-		{
-			FSM_CALL_TASK(noseNavigator)
-			FSM_TRANSITIONS
-			{
-				FSM_ON_CONDITION(1, FSM_NEXT(test_nose_navigator));
-			}
-		}
+        FSM_STATE(test_nose_navigator)
+        {
+            FSM_CALL_TASK(noseNavigator)
+            FSM_TRANSITIONS
+            {
+                FSM_ON_CONDITION(1, FSM_NEXT(test_nose_navigator));
+            }
+        }
 
-		FSM_STATE(test_lane_navigator)
-		{
-			FSM_CALL_TASK(laneNavigator)
-			FSM_TRANSITIONS
-			{
-				FSM_ON_CONDITION(1,FSM_NEXT(test_lane_navigator));
-			}
-		}
+        FSM_STATE(test_lane_navigator)
+        {
+            FSM_CALL_TASK(laneNavigator)
+            FSM_TRANSITIONS
+            {
+                FSM_ON_CONDITION(1,FSM_NEXT(test_lane_navigator));
+            }
+        }
 
-		FSM_STATE(test_waypoint_navigator)
-		{
-			FSM_CALL_TASK(waypointNavigator)
-			FSM_TRANSITIONS
-			{
-				FSM_ON_CONDITION(1, test_waypoint_navigator);
-			}
-		}
+        FSM_STATE(test_waypoint_navigator)
+        {
+            FSM_CALL_TASK(waypointNavigator)
+            FSM_TRANSITIONS
+            {
+                FSM_ON_CONDITION(1, test_waypoint_navigator);
+            }
+        }
 
 
-		FSM_STATE(non_test_mode)
-		{
-			
+        FSM_STATE(non_test_mode)
+        {
+            
 
-			FSM_TRANSITIONS
-			{
-				FSM_ON_CONDITION(nml_flag == 0 && is_confident == 1 && is_test_mode==0, FSM_NEXT(non_test_lane_navigator));
-				FSM_ON_CONDITION(nml_flag == 0 && is_confident == 0 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
-				FSM_ON_CONDITION(nml_flag == 1 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
-			}
-		}
+            FSM_TRANSITIONS
+            {
+                FSM_ON_CONDITION(nml_flag == 0 && is_confident == 1 && is_test_mode==0, FSM_NEXT(non_test_lane_navigator));
+                FSM_ON_CONDITION(nml_flag == 0 && is_confident == 0 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
+                FSM_ON_CONDITION(nml_flag == 1 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
+            }
+        }
 
-		FSM_STATE(non_test_lane_navigator)
-		{
+        FSM_STATE(non_test_lane_navigator)
+        {
 
-			FSM_CALL_TASK(laneNavigator)
+            FSM_CALL_TASK(laneNavigator)
 
-			FSM_TRANSITIONS
-			{
-				FSM_ON_CONDITION(nml_flag == 1 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
-				FSM_ON_CONDITION(nml_flag == 0 && is_confident == 1 && is_test_mode==0, FSM_NEXT(non_test_lane_navigator));
-				FSM_ON_CONDITION(nml_flag == 0 && is_confident == 0 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
-			}
-		}
+            FSM_TRANSITIONS
+            {
+                FSM_ON_CONDITION(nml_flag == 1 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
+                FSM_ON_CONDITION(nml_flag == 0 && is_confident == 1 && is_test_mode==0, FSM_NEXT(non_test_lane_navigator));
+                FSM_ON_CONDITION(nml_flag == 0 && is_confident == 0 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
+            }
+        }
 
-		FSM_STATE(non_test_waypoint_navigator)
-		{
-			FSM_CALL_TASK(waypointNavigator)
-			
-			FSM_TRANSITIONS
-			{
-				FSM_ON_CONDITION(nml_flag == 1 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
-				FSM_ON_CONDITION(nml_flag == 0 && is_confident == 1 && is_test_mode==0, FSM_NEXT(non_test_lane_navigator));
-				FSM_ON_CONDITION(nml_flag == 0 && is_confident == 0 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
-								
-			}
-		}
-	}
+        FSM_STATE(non_test_waypoint_navigator)
+        {
+            FSM_CALL_TASK(waypointNavigator)
+            
+            FSM_TRANSITIONS
+            {
+                FSM_ON_CONDITION(nml_flag == 1 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
+                FSM_ON_CONDITION(nml_flag == 0 && is_confident == 1 && is_test_mode==0, FSM_NEXT(non_test_lane_navigator));
+                FSM_ON_CONDITION(nml_flag == 0 && is_confident == 0 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
+                                
+            }
+        }
+    }
 
-	FSM_END
+    FSM_END
 
 }
 
@@ -139,7 +139,7 @@ LocalTasks
 
 decision_making::TaskResult noseTask(string name, const FSMCallContext& context, EventQueue& eventQueue)
 {
-	MoveBaseClient ac("move_base", true);
+    MoveBaseClient ac("move_base", true);
 
     goal.target_pose = strategy_planner.getNoseTarget();
     goal.target_pose.header.stamp = ros::Time::now();
@@ -151,14 +151,14 @@ decision_making::TaskResult noseTask(string name, const FSMCallContext& context,
     ac.waitForResult();
    
     if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-	{
-		return decision_making::TaskResult::SUCCESS();
-	}
-	else
-	{
-		ROS_INFO("No data received");
-		return decision_making::TaskResult::SUCCESS();
-	}
+    {
+        return decision_making::TaskResult::SUCCESS();
+    }
+    else
+    {
+        ROS_INFO("No data received");
+        return decision_making::TaskResult::SUCCESS();
+    }
 
 
 
@@ -166,9 +166,9 @@ decision_making::TaskResult noseTask(string name, const FSMCallContext& context,
 
 decision_making::TaskResult laneTask(string name, const FSMCallContext& context, EventQueue& eventQueue)
 {
-	MoveBaseClient ac("move_base", true);
+    MoveBaseClient ac("move_base", true);
 
-	goal.target_pose = strategy_planner.getLaneTarget();
+    goal.target_pose = strategy_planner.getLaneTarget();
     goal.target_pose.header.stamp = ros::Time::now();
     goal.target_pose.header.frame_id = "base_link";
 
@@ -178,21 +178,21 @@ decision_making::TaskResult laneTask(string name, const FSMCallContext& context,
     ac.waitForResult();
    
     if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-	{
-		return decision_making::TaskResult::SUCCESS();
-	}
-	else
-	{
-		ROS_INFO("No data received lane");
-		
-		return decision_making::TaskResult::SUCCESS();
-	}
+    {
+        return decision_making::TaskResult::SUCCESS();
+    }
+    else
+    {
+        ROS_INFO("No data received lane");
+        
+        return decision_making::TaskResult::SUCCESS();
+    }
 }
 
 decision_making::TaskResult waypointTask(string name, const FSMCallContext& context, EventQueue& eventQueue)
 {
 
-	MoveBaseClient ac("move_base", true);
+    MoveBaseClient ac("move_base", true);
 
     goal.target_pose = strategy_planner.getWaypointTarget();
     goal.target_pose.header.stamp = ros::Time::now();
@@ -204,15 +204,15 @@ decision_making::TaskResult waypointTask(string name, const FSMCallContext& cont
     ac.waitForResult();
    
     if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-	{
-		return decision_making::TaskResult::SUCCESS();
-	}
-	else
-	{
-		ROS_INFO("No data received waypoint");
-		
-		return decision_making::TaskResult::SUCCESS();
-	}
+    {
+        return decision_making::TaskResult::SUCCESS();
+    }
+    else
+    {
+        ROS_INFO("No data received waypoint");
+        
+        return decision_making::TaskResult::SUCCESS();
+    }
 }
 
 void setTestMode(std_msgs::Bool test_mode) 
@@ -232,12 +232,12 @@ void setConfidence(std_msgs::Bool confidence)
 
 int main(int argc, char** argv)
 {
-	ros::init(argc, argv, "fsm_high_level_planner_igvc");
-	ros_decision_making_init(argc, argv);
-	ros::NodeHandle nh;
-	RosEventQueue eventQueue;
+    ros::init(argc, argv, "fsm_high_level_planner_igvc");
+    ros_decision_making_init(argc, argv);
+    ros::NodeHandle nh;
+    RosEventQueue eventQueue;
 
-	ros::Subscriber sub_nml_flag = nh.subscribe("nml_flag", buffer_size, setNmlFlag);
+    ros::Subscriber sub_nml_flag = nh.subscribe("nml_flag", buffer_size, setNmlFlag);
     ros::Subscriber sub_confidence = nh.subscribe("confidence", buffer_size, setConfidence);
     ros::Subscriber sub_test_mode = nh.subscribe("test_mode", buffer_size, setTestMode);
    // ros::Subscriber sub_nose_navigator_proposed_target = nh.subscribe("/nose_navigator/proposed_target", buffer_size, &Strategy_Planner::setNoseTarget, &strategy_planner);
