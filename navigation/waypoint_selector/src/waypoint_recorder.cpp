@@ -19,14 +19,6 @@ void setCurrentGPS(sensor_msgs::NavSatFix sensor_gps) {
     current_gps = sensor_gps;
 }
 
-std::string doubleToText(const double & d) {
-    std::stringstream ss;
-    //ss << std::setprecision( std::numeric_limits<double>::digits10+2);
-    ss << std::setprecision(std::numeric_limits<int>::max());
-    ss << d;
-    return ss.str();
-}
-
 int main(int argc, char* argv[]) {
     int file_count, i, no_of_waypoints, count;
     std::string c;
@@ -106,11 +98,9 @@ int main(int argc, char* argv[]) {
     waypoints_file.open(record_file.c_str(), std::ios::in | std::ios::out | std::ios::trunc);
     waypoints_file << count << std::endl;
     for (std::vector <sensor_msgs::NavSatFix>::iterator it = waypoints_vector.begin(); it != waypoints_vector.end(); it++) {
-        //std::string textlat = doubleToText(it->latitude);
-        //std::string textlon = doubleToText(it->latitude);
-        waypoints_file << it ->latitude;
+        waypoints_file << std::setprecision(10) << it->latitude;
         waypoints_file << " ";
-        waypoints_file << it -> longitude << std::endl;
+        waypoints_file << std::setprecision(10) << it->longitude << std::endl;
     }
     waypoints_file << "#mention this file in the launch of waypoint_selector." << std::endl;
     waypoints_file.close();
