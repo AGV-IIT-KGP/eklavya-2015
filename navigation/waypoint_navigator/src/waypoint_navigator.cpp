@@ -84,9 +84,25 @@ geometry_msgs::PoseStamped WaypointNavigator::convert_Pose2D_to_PoseStamped(geom
     pose_stamp.pose.position.y=pose2d.y;
     pose_stamp.pose.position.z=0;
 
+<<<<<<< HEAD
     pose_stamp.pose.orientation.x=cos(pose2d.theta/2);
     pose_stamp.pose.orientation.y=0;
     pose_stamp.pose.orientation.z=0;
     pose_stamp.pose.orientation.w=sin(pose2d.theta/2);
+=======
+    tf::Quaternion frame_quat;
+    frame_quat=tf::createQuaternionFromYaw(pose2d.theta);
+
+    pose_stamp.pose.orientation.x=frame_quat.x();
+    pose_stamp.pose.orientation.y=frame_quat.y();
+    pose_stamp.pose.orientation.z=frame_quat.z();
+    pose_stamp.pose.orientation.w=frame_quat.w();
+
+    /*pose_stamp.pose.orientation.x=cos(pose2d.theta/2);
+    pose_stamp.pose.orientation.y=0;
+    pose_stamp.pose.orientation.z=0;
+    pose_stamp.pose.orientation.w=sin(pose2d.theta/2);
+    */
+>>>>>>> 8d90e599afd320daaf9e42ea06d8c79ce47651f9
     return pose_stamp;
 }
