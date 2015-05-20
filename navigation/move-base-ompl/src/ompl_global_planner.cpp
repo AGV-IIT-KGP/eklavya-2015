@@ -76,7 +76,7 @@ void OmplGlobalPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* c
     {
         ros::NodeHandle private_nh("~/" + name);
         _costmap_ros = costmap_ros;
-        _frame_id = "map";
+        _frame_id = "odom";
         _costmap_model = new base_local_planner::CostmapModel(*_costmap_ros->getCostmap());
 
         _plan_pub = private_nh.advertise<nav_msgs::Path>("plan", 1);
@@ -419,17 +419,17 @@ bool OmplGlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start, const 
 
     ROS_INFO("Problem defined, running planner");
     // oc::DecompositionPtr decomp(new My
-    // ob::PlannerPtr planner(new oc::LBTRRT(si));
-    // ob::PlannerPtr planner(new og::RRTConnect(si));
+    //ob::PlannerPtr planner(new oc::LBTRRT(si));
+     ob::PlannerPtr planner(new og::RRTConnect(si));
     //ob::PlannerPtr planner(new og::RRTstar(si));
-    // ob::PlannerPtr planner(new og::PRMstar(si)); // works
+     //ob::PlannerPtr planner(new og::PRMstar(si)); // works
     // ob::PlannerPtr planner(new og::PRM(si)); // segfault
     // ob::PlannerPtr planner(new og::TRRT(si));
 
-    ob::PlannerPtr planner(new oc::RRT(si));
+    //ob::PlannerPtr planner(new oc::RRT(si));
     //ob::PlannerPtr planner(new oc::EST(si));
     //ob::PlannerPtr planner(new oc::EST(si));
-    //ob::PlannerPtr planner(new oc::KPIECE1(si));
+    //ob::PlannerPtr planner(new oc::KPIECE1(si)); //segfaults
 
     planner->setProblemDefinition(pdef);
     planner->setup();
