@@ -1,3 +1,11 @@
+/***********************************************************************
+Changes made by: Anurag A. Bharadwaj
+Date: 19th May 
+
+This node publishes the Final output to the high level planner in PoseStamped form
+in the odom frame.
+
+*************************************************************************/
 #include <waypoint_selector.hpp>
 
 typedef long double precnum_t;
@@ -90,70 +98,77 @@ geometry_msgs::Pose2D WaypointSelector::interpret(sensor_msgs::NavSatFix current
     return enu_relative_target_2D;
 }
 
-double WaypointSelector::getMod(geometry_msgs::Pose2D pose) {
-    return std::sqrt(pose.x * pose.x + pose.y * pose.y);
+double WaypointSelector::getMod(geometry_msgs::Point p1, geometry_msgs::Pose2D p2) {
+    return std::sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
 }
 
-void WaypointSelector::set_current_position(sensor_msgs::NavSatFix subscribed_fix) {
+void WaypointSelector::set_current_gps_position(sensor_msgs::NavSatFix subscribed_fix) {
     current_gps_position_ = subscribed_fix;
+    subscription_started_gps = true; //makes sure we have subscribed at least once before we process the data
 }
 
-std::vector<std::pair<sensor_msgs::NavSatFix, bool> >::iterator WaypointSelector::selectNearestWaypoint() {
+void WaypointSelector::set_current_odom_position(nav_msgs::Odometry subscribed_fix){
+    current_odom_position_ = subscribed_fix;
+    subscription_started_odom = true; //makes sure that we have subscribed at least once before we process the data
+}
+
+
+std::vector<std::pair<geometry_msgs::Pose2D, bool> >::iterator WaypointSelector::selectNearestWaypoint() {
     int flagged_index = -1;
     double min_distance;
-    for (std::vector < std::pair < sensor_msgs::NavSatFix, bool> >::iterator it = gps_waypoints_.begin(); it != gps_waypoints_.end(); ++it) {
+    for (std::vector <std::pair<geometry_msgs::Pose2D, bool > >::iterator it = odom_waypoints_.begin(); it != odom_waypoints_.end(); ++it) {
         if (!it->second) {
             if (flagged_index == -1) {
-                flagged_index = it - gps_waypoints_.begin();
-                min_distance = getMod(interpret(current_gps_position_, it->first));
+                flagged_index = it - odom_waypoints_.begin();
+                min_distance = getMod(current_odom_position_.pose.pose.position, it->first);
             }
-            if (getMod(interpret(current_gps_position_, it->first)) < min_distance) {
-                flagged_index = it - gps_waypoints_.begin();
-                min_distance = getMod(interpret(current_gps_position_, it->first));
+            if (getMod(current_odom_position_.pose.pose.position, it->first) < min_distance) {
+                flagged_index = it - odom_waypoints_.begin();
+                min_distance = getMod(current_odom_position_.pose.pose.position, it->first);
             }
         }
     }
     if (flagged_index == -1) {
-        return gps_waypoints_.end();
+        return odom_waypoints_.end();
     }
 
-    return gps_waypoints_.begin() + flagged_index;
+    return odom_waypoints_.begin() + flagged_index;
 }
 
-std::vector<std::pair<sensor_msgs::NavSatFix, bool> >::iterator WaypointSelector::selectNextWaypointInSequence() {
+std::vector<std::pair<geometry_msgs::Pose2D, bool> >::iterator WaypointSelector::selectNextWaypointInSequence() {
     int flagged_index = -1;
-    if (last_waypoint_ == gps_waypoints_.end()) {
-        return gps_waypoints_.begin();
+    if (last_waypoint_ == odom_waypoints_.end()) {
+        return odom_waypoints_.begin();
     }
 
-    unsigned int index = (last_waypoint_ - gps_waypoints_.begin() + 1) % gps_waypoints_.size();
-    for (; index != (last_waypoint_ - gps_waypoints_.begin()); index = (index + 1) % gps_waypoints_.size()) {
-        if (!gps_waypoints_.at(index).second) {
+    unsigned int index = (last_waypoint_ - odom_waypoints_.begin() + 1) % odom_waypoints_.size();
+    for (; index != (last_waypoint_ - odom_waypoints_.begin()); index = (index + 1) % odom_waypoints_.size()) {
+        if (!odom_waypoints_.at(index).second) {
             flagged_index = index;
             break;
         }
     }
     if (flagged_index == -1) {
-        if (!gps_waypoints_.at(index).second) {
+        if (!odom_waypoints_.at(index).second) {
             flagged_index = index;
         }
     }
     if (flagged_index == -1) {
-        return gps_waypoints_.end();
+        return odom_waypoints_.end();
     }
-
-    return gps_waypoints_.begin() + flagged_index;
+   
+    return odom_waypoints_.begin() + flagged_index;
 }
 
-bool WaypointSelector::reachedCurrentWaypoint(std::vector<std::pair<sensor_msgs::NavSatFix, bool> >::iterator target_ptr) {
-    double error = getMod(interpret(current_gps_position_, target_ptr->first));
+bool WaypointSelector::reachedCurrentWaypoint(std::vector<std::pair<geometry_msgs::Pose2D, bool> >::iterator target_ptr) {
+    double error = getMod(current_odom_position_.pose.pose.position, target_ptr->first);
     std::cout << "Error: " << error << std::endl;
 
     if (error < proximity_ || planner_status_ == "TARGET REACHED") {
         target_ptr->second = true;
         last_waypoint_ = target_ptr;
         num_visited_waypoints_++;
-        if (num_visited_waypoints_ == gps_waypoints_.size()) {
+        if (num_visited_waypoints_ == odom_waypoints_.size()) {
             inside_no_mans_land_ = false;
         } else {
             inside_no_mans_land_ = true;
@@ -168,17 +183,30 @@ void WaypointSelector::set_planner_status(std_msgs::String status) {
 }
 
 WaypointSelector::WaypointSelector(std::string file, int strategy) {
+    
     if (!readWaypoints(waypoints_, gps_waypoints_, num_of_waypoints_, file)) {
         std::cout << "exiting";
         exit(1);
     }
+
+    ros::NodeHandle node_handle;
+
+    planner_status_subscriber = node_handle.subscribe("local_planner/status", buffer_size, &WaypointSelector::set_planner_status, this);
+    fix_subscriber = node_handle.subscribe("gps/fix", buffer_size, &WaypointSelector::set_current_gps_position, this);
+    odom_subscriber = node_handle.subscribe("odom", buffer_size,  &WaypointSelector::set_current_odom_position, this);
+    next_waypoint_publisher = node_handle.advertise<geometry_msgs::PoseStamped>("waypoint_navigator/proposed_target", buffer_size);
+    nml_flag_publisher = node_handle.advertise<std_msgs::Bool>("waypoint_selector/nml_flag", buffer_size);
+   
     strategy_ = strategy;
-    last_waypoint_ = gps_waypoints_.end();
+    last_waypoint_ = odom_waypoints_.end();
     inside_no_mans_land_ = false;
     num_visited_waypoints_ = 0;
+    subscription_started_gps = false;
+    subscription_started_odom = false;
+   // std::exit(0);
 }
 
-sensor_msgs::NavSatFix WaypointSelector::findTarget() {
+geometry_msgs::Pose2D WaypointSelector::findTarget() {
     switch (strategy_) {
         case sequential_selector:
             if (num_visited_waypoints_ == 0) {
@@ -188,8 +216,8 @@ sensor_msgs::NavSatFix WaypointSelector::findTarget() {
                 }
             } else {
                 current_target_ptr = selectNextWaypointInSequence();
-                if (current_target_ptr == gps_waypoints_.end()) {
-                    for (std::vector < std::pair < sensor_msgs::NavSatFix, bool> >::iterator it = gps_waypoints_.begin(); it != gps_waypoints_.end(); it++) {
+                if (current_target_ptr == odom_waypoints_.end()) {
+                    for (std::vector < std::pair < geometry_msgs::Pose2D, bool> >::iterator it = odom_waypoints_.begin(); it != odom_waypoints_.end(); it++) {
                         it->second = false;
                     }
                     current_target_ptr = selectNextWaypointInSequence();
@@ -201,8 +229,14 @@ sensor_msgs::NavSatFix WaypointSelector::findTarget() {
             break;
         case greedy_selector:
             current_target_ptr = selectNearestWaypoint();
-            if (current_target_ptr == gps_waypoints_.end()) {
-                return current_gps_position_;
+            if (current_target_ptr == odom_waypoints_.end()) {
+                {
+                    geometry_msgs::Pose2D pose2d;
+                    pose2d.x = current_odom_position_.pose.pose.position.x;
+                    pose2d.y = current_odom_position_.pose.pose.position.y;
+                    pose2d.theta = M_PI /2;
+                    return pose2d;
+                }
             }
             if (!reachedCurrentWaypoint(current_target_ptr)) {
                 return current_target_ptr->first;
@@ -213,7 +247,40 @@ sensor_msgs::NavSatFix WaypointSelector::findTarget() {
             break;
     }
 }
+geometry_msgs::PoseStamped WaypointSelector::convert_Pose2D_to_PoseStamped(geometry_msgs::Pose2D pose2d){
+    geometry_msgs::PoseStamped pose_stamp;
+
+
+    pose_stamp.pose.position.x = pose2d.x;
+    pose_stamp.pose.position.y = pose2d.y;
+    pose_stamp.pose.position.z = 0;
+    pose_stamp.header.frame_id = "odom";
+    tf::Quaternion frame_quat;
+    frame_quat=tf::createQuaternionFromYaw(pose2d.theta);
+
+    pose_stamp.pose.orientation.x=frame_quat.x();
+    pose_stamp.pose.orientation.y=frame_quat.y();
+    pose_stamp.pose.orientation.z=frame_quat.z();
+    pose_stamp.pose.orientation.w=frame_quat.w();
+
+    return pose_stamp;
+}
 
 bool WaypointSelector::isInsideNoMansLand() {
     return inside_no_mans_land_;
+}
+
+void WaypointSelector::convert_gps_to_odom()
+{
+    for(std::vector < std::pair <sensor_msgs::NavSatFix, bool> >::iterator it = gps_waypoints_.begin(); it != gps_waypoints_.end(); ++it){
+        geometry_msgs::Pose2D bot_relative_2D;
+        std::pair<geometry_msgs::Pose2D, bool> odom_target_2D;
+
+        bot_relative_2D = interpret(current_gps_position_, it->first);
+        odom_target_2D.first.x = bot_relative_2D.x + current_odom_position_.pose.pose.position.x;
+        odom_target_2D.first.y = bot_relative_2D.y + current_odom_position_.pose.pose.position.y;
+        odom_target_2D.first.theta = M_PI / 2;
+        odom_target_2D.second = false;
+        odom_waypoints_.push_back(odom_target_2D);
+    }
 }

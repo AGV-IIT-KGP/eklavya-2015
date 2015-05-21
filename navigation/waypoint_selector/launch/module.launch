@@ -2,8 +2,8 @@
 
 <launch>
     <node pkg="waypoint_selector" type="waypoint_selector" name="waypoint_selector" output="screen" cwd="node">
-        <param name="proximity" type="double" value="2.0"/>
-        <param name="filename" type="str" value="$(find waypoint_selector)/data/GPS_waypoints26.txt"/>                
+        <param name="proximity" type="double" value="4.0"/>
+        <param name="filename" type="str" value="$(find waypoint_selector)/data/GPS_waypoints31.txt"/>                
         <param name="strategy" type="int" value="1"/>        
     </node>
 </launch>
