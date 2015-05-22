@@ -12,13 +12,13 @@ catkin_package(
 
 include_directories(${catkin_INCLUDE_DIRS})
 
-add_executable(eklavya_keyboard_teleop src/keyboard_teleop.cpp)
+add_executable(keyboard_teleop src/keyboard_teleop.cpp)
 
-target_link_libraries(eklavya_keyboard_teleop
+target_link_libraries(keyboard_teleop
   ${catkin_LIBRARIES}
 )
 
-install(TARGETS eklavya_keyboard_teleop
+install(TARGETS keyboard_teleop
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
