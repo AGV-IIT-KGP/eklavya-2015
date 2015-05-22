@@ -17,7 +17,10 @@
 #include <std_msgs/Float64.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/String.h>
+<<<<<<< HEAD
+=======
  #include <tf/transform_datatypes.h>
+>>>>>>> 8d90e599afd320daaf9e42ea06d8c79ce47651f9
 
 static const int buffer_size = 10;
 static const int loop_rate_hz = 10;
