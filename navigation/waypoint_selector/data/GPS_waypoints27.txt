@@ -1,2 +1,0 @@
-0
-#mention this file in the launch of waypoint_selector.
