@@ -17,6 +17,7 @@
 #include <geometry_msgs/Pose2D.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <tf/transform_datatypes.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
 
 
 //All distance units are in meter. Conversion has been taken care of before publishing.
@@ -39,14 +40,17 @@ class WaypointSelector {
     std::ifstream waypoints_;
     sensor_msgs::NavSatFix current_gps_position_;
     nav_msgs::Odometry current_odom_position_;
+    geometry_msgs::PoseWithCovarianceStamped current_ekf_position_;
     std::vector<std::pair<geometry_msgs::Pose2D, bool> >::iterator current_target_ptr;
     std::vector<std::pair<sensor_msgs::NavSatFix, bool> > gps_waypoints_;
     std::vector<std::pair<geometry_msgs::Pose2D, bool> >::iterator last_waypoint_;
     std::vector<std::pair<geometry_msgs::Pose2D, bool> > odom_waypoints_;
+
     ros::Subscriber planner_status_subscriber;
     ros::Subscriber fix_subscriber;
     ros::Subscriber odom_subscriber;
-
+    ros::Publisher odom1_publisher;
+    
 public:
     double proximity_;
     bool subscription_started_gps;
@@ -56,7 +60,8 @@ public:
     geometry_msgs::Pose2D interpret(sensor_msgs::NavSatFix current, sensor_msgs::NavSatFix target);
     double getMod(geometry_msgs::Point p1, geometry_msgs::Pose2D p2);
     void set_current_gps_position(sensor_msgs::NavSatFix subscriber_gps);
-    void set_current_odom_position(nav_msgs::Odometry subscriber_odom);
+    void set_current_odom_position(/*nav_msgs::Odometry subscriber_odom*/);
+    void set_current_ekf_position(geometry_msgs::PoseWithCovarianceStamped subscriber_ekf);
     std::vector<std::pair<geometry_msgs::Pose2D, bool> >::iterator selectNearestWaypoint();
     std::vector<std::pair<geometry_msgs::Pose2D, bool> >::iterator selectNextWaypointInSequence();
     bool reachedCurrentWaypoint(std::vector<std::pair<geometry_msgs::Pose2D, bool> >::iterator target_ptr);

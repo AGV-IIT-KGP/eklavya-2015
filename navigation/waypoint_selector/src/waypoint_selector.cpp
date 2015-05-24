@@ -107,11 +107,20 @@ void WaypointSelector::set_current_gps_position(sensor_msgs::NavSatFix subscribe
     subscription_started_gps = true; //makes sure we have subscribed at least once before we process the data
 }
 
-void WaypointSelector::set_current_odom_position(nav_msgs::Odometry subscribed_fix){
-    current_odom_position_ = subscribed_fix;
-    subscription_started_odom = true; //makes sure that we have subscribed at least once before we process the data
+void WaypointSelector::set_current_odom_position(/*nav_msgs::Odometry subscribed_fix*/){
+    /*current_odom_position_ = subscribed_fix;
+    subscription_started_odom = true; //makes sure that we have subscribed at least once before we process the data*/
+	current_odom_position_.pose = current_ekf_position_.pose;
+	current_odom_position_.header = current_ekf_position_.header;
+	odom1_publisher.publish(current_odom_position_);
+	
 }
-
+void WaypointSelector::set_current_ekf_position(geometry_msgs::PoseWithCovarianceStamped subscribed_fix)
+{
+	current_ekf_position_ = subscribed_fix;
+	subscription_started_odom = true;
+	set_current_odom_position();		//for robot ekf topic, may be changed later
+}
 
 std::vector<std::pair<geometry_msgs::Pose2D, bool> >::iterator WaypointSelector::selectNearestWaypoint() {
     int flagged_index = -1;
@@ -193,10 +202,11 @@ WaypointSelector::WaypointSelector(std::string file, int strategy) {
 
     planner_status_subscriber = node_handle.subscribe("local_planner/status", buffer_size, &WaypointSelector::set_planner_status, this);
     fix_subscriber = node_handle.subscribe("gps/fix", buffer_size, &WaypointSelector::set_current_gps_position, this);
-    odom_subscriber = node_handle.subscribe("odom", buffer_size,  &WaypointSelector::set_current_odom_position, this);
+    odom_subscriber = node_handle.subscribe("robot_pose_ekf/odom_combined", buffer_size,  &WaypointSelector::set_current_ekf_position, this);
     next_waypoint_publisher = node_handle.advertise<geometry_msgs::PoseStamped>("waypoint_navigator/proposed_target", buffer_size);
     nml_flag_publisher = node_handle.advertise<std_msgs::Bool>("waypoint_selector/nml_flag", buffer_size);
-   
+   	odom1_publisher = node_handle.advertise<nav_msgs::Odometry>("odom1",buffer_size);
+
     strategy_ = strategy;
     last_waypoint_ = odom_waypoints_.end();
     inside_no_mans_land_ = false;
