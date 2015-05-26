@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <launch>   
   <arg name="name" default="eklavya" />
-  <arg name="drive_speed" default="0.7" />
-  <arg name="turn_speed" default="1.5" />
-  <arg name="run_speed" default="0.7" />
+  <arg name="drive_speed" default="3.0" />
+  <arg name="turn_speed" default="3.0" />
+  <arg name="run_speed" default="5.0" />
   <arg name="cmd_topic" default="cmd_vel" />
      
   <!-- <group ns="$(arg name)"> -->
