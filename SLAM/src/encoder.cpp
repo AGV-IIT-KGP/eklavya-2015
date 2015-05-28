@@ -2,12 +2,13 @@
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Pose2D.h>
+#include "robot_localization/encoder_msg.h"
 #include "ros/time.h"
-geometry_msgs::Pose2D msg;
+controls::encoder_msg msg;
 ros::Publisher odom_pub;
 const double l=0.67;         //length of the axle
 //const double c=0.0212790542; //(2*pi*r)/60, Radius(r) = 8 inch
-
+//geometry_msgs::Pose2D msg;
 
 double x = 0.0;
   double y = 0.0;
@@ -23,12 +24,12 @@ double x = 0.0;
   ros::Time last_time;
 
   
-void odomCallback(const geometry_msgs::Pose2D msg)
+void odomCallback(const controls::encoder_msg msg)
 {
 	if (ros::ok())
 {
-    vl=msg.x;
-    vr=msg.y;
+    vr=msg.right_vel;
+    vl=msg.left_vel;
     current_time = ros::Time::now();
 
     double dt = (current_time - last_time).toSec();
@@ -100,7 +101,7 @@ int main(int argc, char** argv){
 
   ros::NodeHandle n;
   last_time=ros::Time::now();
-  ros::Subscriber odom_sub=n.subscribe<geometry_msgs::Pose2D>("encoders",50,odomCallback);
+  ros::Subscriber odom_sub=n.subscribe<controls::encoder_msg>("encoders",50,odomCallback);
   odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
   ros::spin();
   return 0;

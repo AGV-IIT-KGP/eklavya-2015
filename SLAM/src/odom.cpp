@@ -14,22 +14,20 @@ void odomCallback(nav_msgs::Odometry msg)
 {
 
     //add covariance
-
-    
-    msg.pose.covariance=boost::assign::list_of (0.0625)(0.0)(0.0)(0.0)(0.0)(0.0)
-                                               (0.0)(90.0)(0.0)(0.0)(0.0)(0.0)
+    msg.pose.covariance=boost::assign::list_of(0.0001)(0.0)(0.0)(0.0)(0.0)(0.0)
+                                               (0.0)(0.0001)(0.0)(0.0)(0.0)(0.0)
                                                (0.0)(0.0)(1.0e+9)(0.0)(0.0)(0.0)
                                                (0.0)(0.0)(0.0)(1.0e+9)(0.0)(0.0)
                                                (0.0)(0.0)(0.0)(0.0)(1.0e+9)(0.0)
-                                               (0.0)(0.0)(0.0)(0.0)(0.0)(0.1);
+                                               (0.0)(0.0)(0.0)(0.0)(0.0)(0.0001);
 
-    msg.twist.covariance=boost::assign::list_of(0.0625)(0.0)(0.0)(0.0)(0.0)(0.0)
-                                               (0.0)(0.09)(0.0)(0.0)(0.0)(0.0)
+    msg.twist.covariance=boost::assign::list_of(0.0001)(0.0)(0.0)(0.0)(0.0)(0.0)
+                                               (0.0)(0.0001)(0.0)(0.0)(0.0)(0.0)
                                                (0.0)(0.0)(1.0e+9)(0.0)(0.0)(0.0)
                                                (0.0)(0.0)(0.0)(1.0e+9)(0.0)(0.0)
                                                (0.0)(0.0)(0.0)(0.0)(1.0e+9)(0.0)
-                                               (0.0)(0.0)(0.0)(0.0)(0.0)(0.1);
-        /*for(int i=0;i<5;i++)
+                                               (0.0)(0.0)(0.0)(0.0)(0.0)(0.0001);
+    /*for(int i=0;i<5;i++)
     {
       for(int j=0;j<5;j++)
       {
@@ -85,9 +83,10 @@ void odomCallback(nav_msgs::Odometry msg)
 
 int main(int argc, char** argv){
   ros::init(argc, argv, "odom_corr");
+
   ros::NodeHandle n;
   //odometry - covariance + tf
-  ros::Subscriber odom_sub=n.subscribe<nav_msgs::Odometry>("odom",50,odomCallback);
+  ros::Subscriber odom_sub=n.subscribe<nav_msgs::Odometry>("odom1",50,odomCallback);
   odom_pub = n.advertise<nav_msgs::Odometry>("odom_c", 50);
   ros::spin();
   return 0;
