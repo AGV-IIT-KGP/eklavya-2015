@@ -14,7 +14,6 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr LaneDetector::generatecloud(cv::Mat& img)
 	PointCloud::Ptr cloud_msg(new PointCloud);
     cloud_msg->header.frame_id="base_link";
 	cloud_msg->height=1;
-	
 	for(int i=1;i<=img.rows;i++)
 	{
 		for(int j=0;j<img.cols;j++)

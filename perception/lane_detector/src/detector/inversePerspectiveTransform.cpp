@@ -87,7 +87,7 @@ cv::Mat LaneDetector::inversePerspectiveTransform(cv::Mat &image) {
 
         // Write the parameters to file
         int status = 1;
-        FILE* ipt_data = fopen((ros::package::getPath("lane_detector")+"/data/"+ warp_matrix_file).c_str(), "w");
+        FILE* ipt_data = fopen((ros::package::getPath("lane_detector")+"/data/" + warp_matrix_file).c_str(), "w");
 
         for (int i = 0; i < 4; i++) {
             status = status && fprintf(ipt_data, "%f %f\n", src_vertices[i].x, src_vertices[i].y);
