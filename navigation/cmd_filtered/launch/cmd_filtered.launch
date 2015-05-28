@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<launch>
+    <node pkg="cmd_filtered" type="cmd_filtered" name="cmd_filtered" output="screen" cwd="node">
+        <!--<param name="imu_topic_name" type="str" value="imu"/>-->
+        
+        <!-- if omega difference is greater than this paraneter, we command low_velocity -->
+        <param name="global_threshold" type="double" value="1.0"/>   
+        <!-- a threshold for stopping the command of low velocity and resuming planner commands -->             
+        <param name="local_threshold" type="double" value="0.2"/>
+        <param name="low_velocity" type="double" value = "0.1"/>        
+    </node>
+</launch>
