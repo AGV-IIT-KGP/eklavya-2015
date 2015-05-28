@@ -213,6 +213,7 @@ WaypointSelector::WaypointSelector(std::string file, int strategy) {
     num_visited_waypoints_ = 0;
     subscription_started_gps = false;
     subscription_started_odom = false;
+    //firstWaypointSelected = false;
    // std::exit(0);
 }
 
@@ -238,21 +239,35 @@ geometry_msgs::Pose2D WaypointSelector::findTarget() {
             }
             break;
         case greedy_selector:
-            current_target_ptr = selectNearestWaypoint();
-            if (current_target_ptr == odom_waypoints_.end()) {
+            if(num_of_waypoints_ == 0)
+            {
+                current_target_ptr = selectFirstWaypoint();
+                if(min_dist_from_first_ < 2*proximity_)
                 {
-                    geometry_msgs::Pose2D pose2d;
-                    pose2d.x = current_odom_position_.pose.pose.position.x;
-                    pose2d.y = current_odom_position_.pose.pose.position.y;
-                    pose2d.theta = M_PI /2;
-                    return pose2d;
+                    inside_no_mans_land_ = true;
                 }
+                if(reachedCurrentWaypoint(current_target_ptr))
+                    return current_target_ptr->first;      //using 'if' only to execute the function to make num_of_waypoints = 1
+                return current_target_ptr->first;
             }
-            if (!reachedCurrentWaypoint(current_target_ptr)) {
-                return current_target_ptr->first;
-            } else {
+            else
+            {
                 current_target_ptr = selectNearestWaypoint();
-                return current_target_ptr->first;
+                if (current_target_ptr == odom_waypoints_.end()) {
+                    {
+                        geometry_msgs::Pose2D pose2d;
+                        pose2d.x = current_odom_position_.pose.pose.position.x;
+                        pose2d.y = current_odom_position_.pose.pose.position.y;
+                        pose2d.theta = M_PI /2;
+                        return pose2d;
+                    }
+                }
+                if (!reachedCurrentWaypoint(current_target_ptr)) {
+                    return current_target_ptr->first;
+                } else {
+                    current_target_ptr = selectNearestWaypoint();
+                    return current_target_ptr->first;
+                }
             }
             break;
     }
@@ -293,4 +308,19 @@ void WaypointSelector::convert_gps_to_odom()
         odom_target_2D.second = false;
         odom_waypoints_.push_back(odom_target_2D);
     }
+}
+
+std::vector<std::pair<geometry_msgs::Pose2D, bool> >::iterator WaypointSelector::selectFirstWaypoint()
+{
+    min_dist_from_first_ = getMod(current_odom_position_.pose.pose.position, odom_waypoints_.begin()->first);
+    int flagged_index = 0;
+    for(std::vector< std::pair<geometry_msgs::Pose2D, bool> >::iterator it = odom_waypoints_.begin(); it!=odom_waypoints_.end(); it++)
+    {
+        if(getMod(current_odom_position_.pose.pose.position, it->first) < min_dist_from_first_)
+        {
+            min_dist_from_first_ = getMod(current_odom_position_.pose.pose.position, it->first);
+            flagged_index = it - odom_waypoints_.begin();
+        }       
+    }
+    return odom_waypoints_.begin() + flagged_index;
 }
