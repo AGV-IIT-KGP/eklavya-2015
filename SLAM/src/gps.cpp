@@ -15,9 +15,9 @@ void odomCallback(sensor_msgs::NavSatFix msg)
 
     //add covariance
     msg.position_covariance_type=2;
-    msg.position_covariance=boost::assign::list_of(9.0)(0.0)(0.0)
-                                                  (0.0)(9.0)(0.0)
-                                                  (0.0)(0.0)(9.0);
+    msg.position_covariance=boost::assign::list_of(5.0)(0.0)(0.0)
+                                                  (0.0)(5.0)(0.0)
+                                                  (0.0)(0.0)(1.0e+9);
                                                
 
         //publish the message
