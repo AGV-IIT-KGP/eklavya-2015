@@ -49,7 +49,7 @@
 
     </node>
 
-<node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization1" clear_params="false">
+<node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization3" clear_params="false">
            <param name="frequency" value="40"/>  
            <param name="sensor_timeout" value="0.1"/> 
 
