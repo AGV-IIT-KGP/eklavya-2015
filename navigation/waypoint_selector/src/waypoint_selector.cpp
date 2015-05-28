@@ -239,7 +239,8 @@ geometry_msgs::Pose2D WaypointSelector::findTarget() {
             }
             break;
         case greedy_selector:
-            if(num_of_waypoints_ == 0)
+
+            if(num_visited_waypoints_ == 0)
             {
                 current_target_ptr = selectFirstWaypoint();
                 if(min_dist_from_first_ < 2*proximity_)
