@@ -98,8 +98,7 @@ FSM(High_Level_Planner)
 
             FSM_TRANSITIONS
             {
-                FSM_ON_CONDITION(nml_flag == 0 && is_confident == 1 && is_test_mode==0, FSM_NEXT(non_test_lane_navigator));
-                FSM_ON_CONDITION(nml_flag == 0 && is_confident == 0 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
+                FSM_ON_CONDITION(nml_flag == 0 && is_test_mode==0, FSM_NEXT(non_test_lane_navigator));
                 FSM_ON_CONDITION(nml_flag == 1 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
             }
         }
@@ -112,8 +111,7 @@ FSM(High_Level_Planner)
             FSM_TRANSITIONS
             {
                 FSM_ON_CONDITION(nml_flag == 1 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
-                FSM_ON_CONDITION(nml_flag == 0 && is_confident == 1 && is_test_mode==0, FSM_NEXT(non_test_lane_navigator));
-                FSM_ON_CONDITION(nml_flag == 0 && is_confident == 0 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
+                FSM_ON_CONDITION(nml_flag == 0 && is_test_mode==0, FSM_NEXT(non_test_lane_navigator));
             }
         }
 
@@ -124,9 +122,7 @@ FSM(High_Level_Planner)
             FSM_TRANSITIONS
             {
                 FSM_ON_CONDITION(nml_flag == 1 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
-                FSM_ON_CONDITION(nml_flag == 0 && is_confident == 1 && is_test_mode==0, FSM_NEXT(non_test_lane_navigator));
-                FSM_ON_CONDITION(nml_flag == 0 && is_confident == 0 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
-                                
+                FSM_ON_CONDITION(nml_flag == 0 && is_test_mode==0, FSM_NEXT(non_test_lane_navigator));                                
             }
         }
     }
