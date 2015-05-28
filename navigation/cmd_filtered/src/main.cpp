@@ -8,10 +8,10 @@ int main(int argc, char* argv[])
 
 	ros::NodeHandle nh;
 
-	//nh.getParam("imu_topic_name", imu_topic);
-	nh.getParam("global_threshold", global_thresh);
-	nh.getParam("local_threshold", local_thresh);
-	nh.getParam("low_velocity", low_vel);
+	nh.getParam("cmd_filtered/imu_topic_name", imu_topic);
+	nh.getParam("cmd_filtered/global_threshold", global_thresh);
+	nh.getParam("cmd_filtered/local_threshold", local_thresh);
+	nh.getParam("cmd_filtered/low_velocity", low_vel);
 
 	CMD_FILTERED cmd_filtered;
 
