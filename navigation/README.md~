@@ -10,5 +10,3 @@ Steps to run the planner
   `export GAZEBO_RESOURCE_PATH+=:/path_to_models`  
 * Install `OMPL` package for your ROS distro  
   `sudo apt-get install ros-${ROS_DISTRO}-ompl`  
-* Install `BFL` package for your ROS Distro  
-  `sudo  apt-get install ros-${ROS_DISTRO}-bfl`  
