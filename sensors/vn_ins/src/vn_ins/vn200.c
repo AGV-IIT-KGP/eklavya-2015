@@ -2051,6 +2051,43 @@ VN_ERROR_CODE vn200_getYawPitchRollMagneticAccelerationAngularRate(Vn200* vn200,
 	return VNERR_NO_ERROR;
 }
 
+//-------EDIT 1
+VN_ERROR_CODE vn200_getYawPitchRoll(Vn200* vn200, VnYpr* attitude)
+{
+	const char* cmdToSend = "$VNRRG,8";
+	char delims[] = ",*";
+	char* result;
+	Vn200Internal* vn200Int;
+	int errorCode;
+	const char* responseMatch = "VNRRG,";
+
+	if (!vn200->isConnected)
+		return VNERR_NOT_CONNECTED;
+
+	vn200Int = vn200_getInternalData(vn200);
+
+	errorCode = vn200_transaction(vn200, cmdToSend, responseMatch);
+
+	if (errorCode != VNERR_NO_ERROR)
+		return errorCode;
+
+	result = strtok(vn200Int->cmdResponseBuffer, delims);  /* Returns VNRRG */
+	result = strtok(0, delims);                            /* Returns register ID */
+	result = strtok(0, delims);
+	if (result == NULL)
+		return VNERR_INVALID_VALUE;
+	attitude->yaw = atof(result);
+	result = strtok(0, delims);
+	if (result == NULL)
+		return VNERR_INVALID_VALUE;
+	attitude->pitch = atof(result);
+	result = strtok(0, delims);
+	if (result == NULL)
+		return VNERR_INVALID_VALUE;
+	attitude->roll = atof(result);
+
+	return VNERR_NO_ERROR;
+}
 
 
 /** \endcond */

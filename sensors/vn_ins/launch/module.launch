@@ -9,6 +9,7 @@
         <param name="yaw_topic_name" type="str" value="/vn_ins/yaw" />
         <param name="twist_topic_name" type="str" value="/vn_ins/twist" />
         <param name="imu_topic_name" type="str" value="/vn_ins/imu" />
-        <param name="vn200_com_port" type="str" value="/dev/serial/by-id/usb-FTDI_USB-RS232_Cable_FTVJUC0O-if00-port0" />
+        <!--<param name="vn200_com_port" type="str" value="/dev/serial/by-id/usb-FTDI_USB-RS232_Cable_FTVJUC0O-if00-port0" />-->
+        <param name="vn200_com_port" type="str" value="/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_AH02V7ZW-if00-port0" />
         </node> 
 </launch>

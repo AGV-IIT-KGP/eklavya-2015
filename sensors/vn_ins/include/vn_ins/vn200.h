@@ -562,6 +562,9 @@ VN_ERROR_CODE vn200_getInsSolution(Vn200* vn200, double* gpsTime, unsigned short
 
 VN_ERROR_CODE vn200_getYawPitchRollMagneticAccelerationAngularRate(Vn200* vn200, VnYpr* attitude, VnVector3* magnetic, VnVector3* acceleration, VnVector3* angularRate);
 
+VN_ERROR_CODE vn200_getYawPitchRoll(Vn200* vn200, VnYpr* attitude);
+
+
 
 #ifdef __cplusplus
 }
