@@ -52,6 +52,20 @@ void ModeSwitcher::joyCallback(const sensor_msgs::Joy::ConstPtr& joy) //main cal
 		xbox_flag_lock.lock();
 		xboxflag=0;
 		xbox_flag_lock.unlock();
+		Vy_Xbox_lock.lock();
+        Vy_Xbox = - 0.0;
+        Vy_Xbox_lock.unlock();
+        
+        Vy_Xbox_lock.lock();
+        Vy_Xbox = - 0.0;
+        Vy_Xbox_lock.unlock();
+        
+        	Vx_planner_lock.lock();
+		Vx_Planner=0.0;
+		Vx_planner_lock.unlock();
+		W_planner_lock.lock();
+		W_Planner=0.0;
+		W_planner_lock.unlock();
 		
 		return;
 	}
@@ -66,6 +80,16 @@ void ModeSwitcher::joyCallback(const sensor_msgs::Joy::ConstPtr& joy) //main cal
 		
 		xboxflag=1;
 		xbox_flag_lock.unlock();
+		Vy_Xbox_lock.lock();
+        Vy_Xbox = - 0.0;
+        Vy_Xbox_lock.unlock();
+        
+        Vx_Xbox_lock.lock();
+		Vx_Xbox=0.0;
+		Vx_Xbox_lock.unlock();
+		W_Xbox_lock.lock();
+		W_xbox=0.0;
+		W_Xbox_lock.unlock();
 
 	
 	}
