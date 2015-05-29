@@ -1,0 +1,17 @@
+<launch>
+
+	<param name="Alpha_Max" value="45"/>
+	<param name="Alpha_Min" value="-45"/>
+	<param name="d" value="0.9"/>
+	<param name="r" value="0.7"/>
+
+<node pkg="joy" type="joy_node" name="joy_node" respawn="true" />
+	
+<node pkg="controls" type="encoders" name="encoders" respawn="true" output="screen"/>
+
+
+<node pkg="controls" type="modeswitching_node" name = "modeswitching_node" respawn="true" output="screen">
+	<param name="maxvelocity" value="1.0"/>
+</node>
+
+</launch>

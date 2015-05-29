@@ -18,8 +18,13 @@ void OdometryImuCombiner::odomCallback(const geometry_msgs::Twist msg)
 {
   if (ros::ok())
 {
+<<<<<<< HEAD
     vr=msg.linear.y;//right_vel;
     vl=msg.linear.x;//left_vel;
+=======
+    vr=msg.linear.y;
+    vl=msg.linear.x;
+>>>>>>> a1bfbfcb63557c7b3dcb81bb157c76e013dae9ef
     v=(vl+vr)/2;
     
   }

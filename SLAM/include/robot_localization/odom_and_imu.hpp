@@ -12,6 +12,7 @@
 #include <geometry_msgs/Twist.h>
 #include <tf/transform_broadcaster.h>
 #include <math.h>
+#include <geometry_msgs/Twist.h>
 
 class OdometryImuCombiner {
 
