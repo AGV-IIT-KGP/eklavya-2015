@@ -1,0 +1,6 @@
+<launch>
+  <include file="$(find logitech_camera)/launch/module.launch" />
+  <include file="$(find lane_detector)/launch/module.launch" />
+  <include file="$(find lane_navigator)/launch/module.launch" />
+  
+</launch>
