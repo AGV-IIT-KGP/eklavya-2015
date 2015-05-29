@@ -7,13 +7,17 @@ int main(int argc, char** argv){
 
   ros::Rate r(100);
 
-  tf::TransformBroadcaster broadcaster;
+  tf::TransformBroadcaster blink_laser_broadcaster, blink_bfootprint_broadcaster;
 
   while(n.ok()){
-    broadcaster.sendTransform(
+    blink_laser_broadcaster.sendTransform(
       tf::StampedTransform(
         tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(1.06, 0.0, 0.441)),
         ros::Time::now(),"base_link", "laser"));
+    blink_bfootprint_broadcaster.sendTransform(
+      tf::StampedTransform(
+        tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(0.0, 0.0, -0.20)),
+        ros::Time::now(),"base_link", "base_footprint"));
     r.sleep();
   }
 }

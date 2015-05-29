@@ -104,7 +104,7 @@ include_directories(
 
 ## Declare a cpp executable
 # add_executable(robot_setup_tf_node src/robot_setup_tf_node.cpp)
-add_executable(robot_tf_publisher src/base_laser_transform_publisher.cpp)
+add_executable(robot_tf_publisher src/robot_transform_publisher.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

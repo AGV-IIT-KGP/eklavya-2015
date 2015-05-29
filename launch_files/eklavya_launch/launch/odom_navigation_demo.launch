@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-      <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>
+      <param name="base_local_planner" value="ackermann_local_planner"/>
       <!--<param name="base_global_planner" value="global_planner/GlobalPlanner"/>-->
     <param name="base_global_planner" value="navfn/NavfnROS"/>
     <param name="clearing_rotation_allowed" value="false"/>
@@ -11,8 +11,10 @@
     <rosparam file="$(find eklavya_navigation)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
     <rosparam file="$(find eklavya_navigation)/config/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find eklavya_navigation)/config/nomap_global_costmap_params.yaml" command="load" />
-    <rosparam file="$(find eklavya_navigation)/config/base_local_planner_params.yaml" command="load" />
-    <!-- <remap from="cmd_vel" to="plan_cmd_vel" /> -->
+    <!--<rosparam file="$(find eklavya_navigation)/config/base_local_planner_params.yaml" command="load" />-->
+    <rosparam file="$(find dagny_nav_launch)/local_planner.yaml" command="load"/>
+
+    <remap from="cmd_vel" to="cmd_vel_filtered" />
   </node>
   <node pkg="eklavya_robot_setup_tf" type="robot_tf_publisher" name="robot_tf_publisher" output="screen">
     <!--<param name="transform_configuration_param" value="param_value" />-->
