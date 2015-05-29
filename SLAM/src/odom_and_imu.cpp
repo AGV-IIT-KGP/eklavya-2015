@@ -14,12 +14,12 @@ OdometryImuCombiner::OdometryImuCombiner() {
     current_time=last_time= ros::Time::now();
 }
 
-void OdometryImuCombiner::odomCallback(const controls::encoder_msg msg)
+void OdometryImuCombiner::odomCallback(const geometry_msgs::Twist msg)
 {
   if (ros::ok())
 {
-    vr=msg.right_vel;
-    vl=msg.left_vel;
+    vr=msg.linear.y;
+    vl=msg.linear.x;
     v=(vl+vr)/2;
     
   }
@@ -123,7 +123,7 @@ int main(int argc, char** argv){
 
     ros::NodeHandle n;
     OdometryImuCombiner combiner;
-    ros::Subscriber odom_sub=n.subscribe<controls::encoder_msg>("encoders",50, &OdometryImuCombiner::odomCallback, &combiner);
+    ros::Subscriber odom_sub=n.subscribe<geometry_msgs::Twist>("encoders",50, &OdometryImuCombiner::odomCallback, &combiner);
     //ros::Subscriber odom_sub = n.subscribe<nav_msgs::Odometry>("odom", 50, &OdometryImuCombiner::odomCallback, &combiner);
     ros::Subscriber imu_sub = n.subscribe<sensor_msgs::Imu>("vn_ins/imu", 50, &OdometryImuCombiner::imuCallback, &combiner);
     ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom1", 50);

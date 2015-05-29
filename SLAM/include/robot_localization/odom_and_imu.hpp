@@ -11,6 +11,7 @@
 //#include "LinearMath/btMatrix3x3.h"
 #include <tf/transform_broadcaster.h>
 #include <math.h>
+#include <geometry_msgs/Twist.h>
 
 class OdometryImuCombiner {
 
@@ -25,7 +26,7 @@ private:
 
 public:
 	OdometryImuCombiner();
-	void odomCallback(const controls::encoder_msg msg);
+	void odomCallback(const geometry_msgs::Twist msg);
 	void imuCallback(sensor_msgs::Imu imu_msg);
 	void publishUsing(ros::Publisher & publisher);
 };
