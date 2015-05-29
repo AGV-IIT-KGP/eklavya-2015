@@ -1,0 +1,24 @@
+<launch>
+
+<node pkg="joy" type="joy_node" name="joy_node0" respawn="true">
+	<param name="dev" value="/dev/input/js0"/>
+</node>
+<node pkg="joy" type="joy_node" name="joy_node1" respawn="true">
+	<param name="dev" value="/dev/input/js1"/>
+</node>
+<node pkg="joy" type="joy_node" name="joy_node2" respawn="true">
+	<param name="dev" value="/dev/input/js2"/>
+</node>
+<node pkg="joy" type="joy_node" name="joy_node3" respawn="true">
+	<param name="dev" value="/dev/input/js3"/>
+</node>
+<node pkg="joy" type="joy_node" name="joy_node4" respawn="true">
+	<param name="dev" value="/dev/input/js4"/>
+</node>
+	
+
+<node pkg="eklavya4_roboteq" type="roboteq_server" name="roboteq_server" respawn="true" output="screen" />
+
+<node pkg="eklavya4_roboteq" type="roboteq_client" name="roboteq_client" respawn="true" output="screen" />
+
+</launch>
