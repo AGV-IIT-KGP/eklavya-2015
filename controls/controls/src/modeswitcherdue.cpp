@@ -60,12 +60,12 @@ void ModeSwitcher::joyCallback(const sensor_msgs::Joy::ConstPtr& joy) //main cal
         Vy_Xbox = - 0.0;
         Vy_Xbox_lock.unlock();
         
-        Vx_planner_lock.lock();
-		Vx_planner=0.0;
+        	Vx_planner_lock.lock();
+		Vx_Planner=0.0;
 		Vx_planner_lock.unlock();
-		W_Xbox_planner.lock();
-		W_planner=0.0;
-		W_Xbox_planner.unlock();
+		W_planner_lock.lock();
+		W_Planner=0.0;
+		W_planner_lock.unlock();
 		
 		return;
 	}
