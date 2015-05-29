@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(robot_setup_tf)
+project(eklavya_robot_setup_tf)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -104,16 +104,14 @@ include_directories(
 
 ## Declare a cpp executable
 # add_executable(robot_setup_tf_node src/robot_setup_tf_node.cpp)
-add_executable(base_laser_transform src/base_laser_transform_publisher.cpp)
+add_executable(robot_tf_publisher src/base_laser_transform_publisher.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(base_laser_transform 	geometry_msgs
-					roscpp
-					tf)
+#add_dependencies(robot_tf_publisher geometry_msgs roscpp tf)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(base_laser_transform
+target_link_libraries(robot_tf_publisher
    ${catkin_LIBRARIES}
  )
 

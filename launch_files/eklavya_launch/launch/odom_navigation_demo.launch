@@ -14,7 +14,7 @@
     <rosparam file="$(find eklavya_navigation)/config/base_local_planner_params.yaml" command="load" />
     <!-- <remap from="cmd_vel" to="plan_cmd_vel" /> -->
   </node>
-  <node pkg="robot_setup_tf" type="base_laser_transform" name="robot_setup_tf" output="screen">
+  <node pkg="eklavya_robot_setup_tf" type="robot_tf_publisher" name="robot_tf_publisher" output="screen">
     <!--<param name="transform_configuration_param" value="param_value" />-->
   </node>
 </launch>
