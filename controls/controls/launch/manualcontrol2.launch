@@ -1,0 +1,18 @@
+<launch>
+
+	<param name="Alpha_Max" value="45"/>
+	<param name="Alpha_Min" value="-45"/>
+	<param name="d" value="0.9"/>
+	<param name="r" value="0.7"/>
+	
+
+
+<node pkg="controls" type="wpid_node" name="wpid_node" respawn="true" output="screen">
+	<param name="Kp_W" value="1.0"/>
+	<param name="Ki_W" value="0.0001"/>
+	<param name="Kd_W" value="0.0"/>
+	<param name="w_pid_loop_rate" value="10"/>
+	
+</node>
+
+</launch>

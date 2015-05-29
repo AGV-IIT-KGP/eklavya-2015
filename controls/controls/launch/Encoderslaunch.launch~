@@ -1,0 +1,3 @@
+<launch>
+<node pkg="rosserial_python" type="serial_node.py" name="DACarduino" args="usb-Arduino__www.arduino.cc__Arduino_Due_Prog._Port_55432333138351607141-if00" />
+</launch>
