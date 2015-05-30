@@ -14,11 +14,11 @@ void imuCallback(const sensor_msgs::Imu msg)
   	imu=msg;
   	imu.orientation_covariance=boost::assign::list_of(1.0e+9)(0.0)(0.0)
   		                                                (0.0)(1.0e+9)(0.0)
-  		                                                (0.0)(0.0)(0.09);
+  		                                                (0.0)(0.0)(0.0001);
 
     imu.angular_velocity_covariance=boost::assign::list_of(1.0e+9)(0.0)(0.0)
                                                       (0.0)(1.0e+9)(0.0)
-                                                      (0.0)(0.0)(0.001);
+                                                      (0.0)(0.0)(0.0001);
 
 
    imu_pub.publish(imu);

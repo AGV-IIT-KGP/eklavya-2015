@@ -1,0 +1,40 @@
+<launch>
+
+	<param name="Alpha_Max" value="45"/>
+	<param name="Alpha_Min" value="-45"/>
+	<param name="d" value="0.9"/>
+	<param name="r" value="0.7"/>
+	<param name="count_max" value= "1000.0" />
+  	<param name="cont_min" value= "-1000.0" />
+	<param name="w_max" value= "13.0" />
+  	<param name="w_min" value= "-13.0" />
+  
+
+<node pkg="joy" type="joy_node" name="joy_node" respawn="true" />
+	
+<node pkg="controls" type="encoders" name="encoders" respawn="true" output="screen"/>
+
+<node pkg="controls" type="modeswitching_node" name = "modeswitching_node" respawn="true" output="screen">
+	<param name="maxvelocity" value="0.5"/>
+</node>
+
+
+<node pkg="controls" type="vxpid_node" name="vxpid_node" respawn="true" output="screen">
+	<param name="Kp_Vx" value="1200"/>
+	<param name="Ki_Vx" value="200.0"/>
+	<param name="Kd_Vx" value="05.0"/>
+	<param name="PWM_min" value="1400"/>
+	<param name="PWM_max" value="1950"/>
+	<param name="PWM_PERIOD_TIME" value="50000000"/>
+	<param name="vx_pid_loop_rate" value="30"/>
+</node>
+
+<!--<node pkg="controls" type="wpid_node" name="wpid_node" respawn="true" output="screen">
+	<param name="Kp_W" value="60.0"/>
+	<param name="Ki_W" value="0.5" />
+	<param name="Kd_W" value="10.0"/>
+	<param name="w_pid_loop_rate" value="10"/>
+	
+</node>-->
+
+</launch>

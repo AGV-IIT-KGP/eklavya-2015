@@ -63,6 +63,7 @@ add_executable(odometry_publisher src/encoder.cpp)
 add_executable(odom_corr src/odom.cpp)
 add_executable(imu_node src/imu_covariance.cpp)
 add_executable(gps src/gps.cpp)
+add_executable(odom_imu src/odom_and_imu.cpp)
 
 # Linking
 target_link_libraries(filter_base filter_utilities)
@@ -77,6 +78,7 @@ target_link_libraries(odometry_publisher ${catkin_LIBRARIES})
 target_link_libraries(odom_corr ${catkin_LIBRARIES})
 target_link_libraries(imu_node ${catkin_LIBRARIES})
 target_link_libraries(gps ${catkin_LIBRARIES})
+target_link_libraries(odom_imu ${catkin_LIBRARIES})
 
 
 #############

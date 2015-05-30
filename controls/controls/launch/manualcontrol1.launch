@@ -1,0 +1,23 @@
+<launch>
+
+	<param name="Alpha_Max" value="45"/>
+	<param name="Alpha_Min" value="-45"/>
+	<param name="d" value="0.9"/>
+	<param name="r" value="0.7"/>
+	
+
+		
+<node pkg="controls" type="vxpid_node" name="vxpid_node" respawn="true" output="screen">
+	<param name="Kp_Vx" value="20.0"/>
+	<param name="Ki_Vx" value="0.1"/>
+	<param name="Kd_Vx" value="5.0"/>
+	<param name="PWM_min" value="40"/>
+	<param name="PWM_max" value="85"/>
+	<param name="PWM_PERIOD_TIME" value="50000000"/>
+	<param name="vx_pid_loop_rate" value="10"/>
+</node>
+
+
+
+</launch>
+ 

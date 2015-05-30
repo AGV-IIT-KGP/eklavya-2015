@@ -1,0 +1,57 @@
+
+<launch>
+
+	<param name="Alpha_Max" value="45"/>
+	<param name="Alpha_Min" value="-45"/>
+	<param name="d" value="0.93"/>
+	<param name="r" value="0.33"/>
+	<param name="count_max" value= "1000.0" />
+  	<param name="cont_min" value= "-1000.0" />
+	<param name="w_max" value= "13.0" />
+  	<param name="w_min" value= "-13.0" />
+  
+
+<node pkg="joy" type="joy_node" name="joy_node0" respawn="true">
+	<param name="dev" value="/dev/input/js0"/>
+</node>
+<node pkg="joy" type="joy_node" name="joy_node1" respawn="true">
+	<param name="dev" value="/dev/input/js1"/>
+</node>
+<node pkg="joy" type="joy_node" name="joy_node2" respawn="true">
+	<param name="dev" value="/dev/input/js2"/>
+</node>
+<node pkg="joy" type="joy_node" name="joy_node3" respawn="true">
+	<param name="dev" value="/dev/input/js3"/>
+</node>
+<node pkg="joy" type="joy_node" name="joy_node4" respawn="true">
+	<param name="dev" value="/dev/input/js4"/>
+</node>
+	
+<!--<node pkg="encoders" type="encoder_node" name = "encoder_node" respawn="true" output="screen">-->
+	
+<node pkg="controls" type="modeswitching_node" name = "modeswitching_node" respawn="true" output="screen">
+	<param name="maxvelocity" value="0.5"/>
+</node>
+
+
+<node pkg="controls" type="vxpid_node" name="vxpid_node" respawn="true" output="screen">
+	<param name="Kp_Vx" value="410.0"/>  <!--260,5.0,55.0-->
+	<param name="Ki_Vx" value="6.0"/>
+	<param name="Kd_Vx" value="110"/>
+	<param name="PWM_min" value="1400"/>
+	<param name="PWM_max" value="2750"/>
+	<param name="PWM_PERIOD_TIME" value="50000000"/>
+	<param name="vx_pid_loop_rate" value="20"/>
+	<param name="bias" value="1400"/>
+</node>
+
+<node pkg="controls" type="cpid_node" name="cpid_node" respawn="true" output="screen">
+	<param name="Kp_C" value="380"/>  <!--300,0.3,10-->
+	<param name="Ki_C" value="20"/>
+	<param name="Kd_C" value="500"/>
+	<param name="c_pid_loop_rate" value="20"/>
+	<param name="vDead" value="0.1"/>
+	
+</node>
+
+</launch>

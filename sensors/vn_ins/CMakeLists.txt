@@ -44,7 +44,7 @@ include_directories ("${PROJECT_SOURCE_DIR}/include/vn_ins")
 set(vn_ins_src ${PROJECT_SOURCE_DIR}/src/vn_ins)
 set(AGV_FRAMEWORK libagv_framework.so)
 
-add_executable(${PROJECT_NAME} src/vn_ins.cpp ${vn_ins} src/Sensor.cpp ${vn_ins} src/Environment.cpp ${vn_ins_src}/vn200.c ${vn_ins_src}/vn100.c ${vn_ins_src}/vncp_services.c)
+add_executable(${PROJECT_NAME} src/vn_ins.cpp src/Sensor.cpp src/Environment.cpp src/vn_ins/vn200.c src/vn_ins/vn100.c src/vn_ins/vncp_services.c)
 #target_link_libraries(${PROJECT_NAME} m ${AGV_FRAMEWORK})
 target_link_libraries(vn_ins ${catkin_LIBRARIES})
 
