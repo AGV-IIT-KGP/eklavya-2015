@@ -16,6 +16,7 @@ int count = 0;
 int debug=1;
 ros::Publisher pub_point;
 geometry_msgs::Pose2D msge;
+geometry_msgs::PoseStamped new_msg;
 //queue<geometry_msgs::Pose2D> temp;
 int counter=0;
 
@@ -121,14 +122,14 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
 	center_angle= 1.57;
 	center_point.x= bot_x;
 	center_point.y= bot_y;
-    }  
+    }
     double m = tan(center_angle);
     if (m == HUGE_VAL) {
         m = 10000;
     }
     cv::Point leftCenter(0, 0), rightCenter(0, 0);
     double leftSlope = 0.0, rightSlope = 0.0, leftCount = 0, rightCount = 0;
-    
+
 
 
     cv::Point proj,target;
@@ -136,7 +137,7 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
 
     if((bottom.x-top.x)>90 || (top.x-bottom.x)>90)
     {
-        
+
         if(bottom.x>top.x)
         {
             bottom.x-=40;
@@ -163,17 +164,17 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
                 target.x=img.cols;
             target.y = m*(top.x-bottom.x)+bottom.y;
         }
-        
+
         center_angle = -1 * center_angle * 180 / CV_PI;
         //std::cout<<"new\n";
         target_pose.x = target.x;
         target_pose.y = (-1 * target.y + origin.y);
-        target_pose.theta = center_angle;
+        target_pose.theta =center_angle - 1.571;
     }
 
 
     else{
-        for (int i = 0; i < lines.size(); i++) 
+        for (int i = 0; i < lines.size(); i++)
         {
             cv::Vec4i p = lines[i];
             cv::Point midPoint = cv::Point((p[0] + p[2]) / 2, (p[1] + p[3]) / 2);
@@ -191,7 +192,7 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
                     leftSlope += -(lines[i][1] - lines[i][3]) / (lines[i][0] - lines[i][2]);
                 }
                 leftCount++;
-            } 
+            }
             else {
                 rightCenter.x += midPoint.x;
                 rightCenter.y += midPoint.y;
@@ -208,7 +209,7 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
 
             rightCenter.x /= rightCount;
             rightCenter.y /= rightCount;
-            
+
             rightSlope /= rightCount;
             if ((center_point.x - leftCenter.x) < 50 || (leftCenter.x - center_point.x) < 50) {
                 center_point.x += 150; //Target must not lie on the lane
@@ -227,12 +228,12 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
         cv::Point point2;
         point2.x = center_point.x - 100;
         point2.y = center_point.y - m * 100;
-        
+
         center_angle = -1 * center_angle * 180 / CV_PI;
-        
+
         target_pose.x = target.x;
         target_pose.y = (-1 * target.y + origin.y);
-        target_pose.theta = center_angle;
+        target_pose.theta = center_angle - 1.571;
         //cv::Point a(target_pose.x,target_pose.y);
         //cv::circle(img,a,2,cv::Scalar(0,0,255),1,8,0);
         //cv::namedWindow("new",CV_WINDOW_AUTOSIZE);
@@ -288,7 +289,7 @@ void publishTarget(const sensor_msgs::ImageConstPtr msg ) {
     if (debug){ROS_INFO("Listened for the %d time\n", count++);
     cv::namedWindow("listening", CV_WINDOW_AUTOSIZE);}
     cv::Mat img;
-    
+
 
     cv_bridge::CvImagePtr cv_ptr;
     cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::MONO8);
@@ -304,7 +305,8 @@ void publishTarget(const sensor_msgs::ImageConstPtr msg ) {
         temp[i]=temp1;
         temp1=temp2;
     }
-    pub_point.publish(msge);
+    new_msg = convert_Pose2D_to_PoseStamped(msge);
+    pub_point.publish(new_msg);
     if(debug)
     {
        cv::waitKey(33);
@@ -314,6 +316,25 @@ void publishTarget(const sensor_msgs::ImageConstPtr msg ) {
         counter++;
 }
 
+geometry_msgs::PoseStamped convert_Pose2D_to_PoseStamped(geometry_msgs::Pose2D pose2d){
+    geometry_msgs::PoseStamped pose_stamp;
+
+
+    pose_stamp.pose.position.x = pose2d.x;
+    pose_stamp.pose.position.y = pose2d.y;
+    pose_stamp.pose.position.z = 0;
+    pose_stamp.header.frame_id = "base_link";
+    tf::Quaternion frame_quat;
+    frame_quat=tf::createQuaternionFromYaw(pose2d.theta);
+
+    pose_stamp.pose.orientation.x=frame_quat.x();
+    pose_stamp.pose.orientation.y=frame_quat.y();
+    pose_stamp.pose.orientation.z=frame_quat.z();
+    pose_stamp.pose.orientation.w=frame_quat.w();
+
+    return pose_stamp;
+}
+
 int main(int argc, char **argv) {
     std::string node_name= "lane_navigator";
     ros::init(argc, argv, node_name);
@@ -321,7 +342,7 @@ int main(int argc, char **argv) {
     msge.x=0;
     msge.y=0;
     msge.theta=0;
-    pub_point = node_handle.advertise<geometry_msgs::Pose2D>("/lane_navigator/proposed_target", 50);
+    pub_point = node_handle.advertise<geometry_msgs::PoseStamped>("/lane_navigator/intermediate_target", 50);
     ros::Subscriber lanes_subscriber = node_handle.subscribe("/lane_detector1/lanes", 1, &publishTarget);
     while(ros::ok()){
     node_handle.getParam(node_name + "/debug", debug);

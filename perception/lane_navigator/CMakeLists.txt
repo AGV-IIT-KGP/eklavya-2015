@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   image_transport
   roslib
+  geometry_msgs
+  tf
 )
 
 find_package(OpenCV REQUIRED)
@@ -34,7 +36,12 @@ include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
 #  CATKIN_DEPENDS roscpp rospy cv_bridge image_transport std_msgs sensor_msgs roslib
 #  DEPENDS assimp Eigen mlpack
 #)
-
+catkin_package(
+#  INCLUDE_DIRS include
+#  LIBRARIES robot_setup_tf
+  CATKIN_DEPENDS geometry_msgs roscpp tf
+#  DEPENDS system_lib
+)
 #set the default path for built executables to the "bin" directory
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
@@ -54,3 +61,5 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #target_link_libraries(example ${PROJECT_NAME})
 add_executable(lane_navigator src/lane_navigator.cpp)
 target_link_libraries(lane_navigator ${OpenCV_LIBRARIES} ${catkin_LIBRARIES})
+add_executable(lane_tf_publisher src/lane_tf_publisher.cpp)
+target_link_libraries(lane_tf_publisher ${OpenCV_LIBRARIES} ${catkin_LIBRARIES})
