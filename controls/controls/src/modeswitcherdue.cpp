@@ -81,10 +81,10 @@ void ModeSwitcher::joyCallback(const sensor_msgs::Joy::ConstPtr& joy) //main cal
 		xboxflag=1;
 		xbox_flag_lock.unlock();
 		Vy_Xbox_lock.lock();
-        Vy_Xbox = - 0.0;
-        Vy_Xbox_lock.unlock();
+	        Vy_Xbox = - 0.0;
+       		Vy_Xbox_lock.unlock();
         
-        Vx_Xbox_lock.lock();
+       		Vx_Xbox_lock.lock();
 		Vx_Xbox=0.0;
 		Vx_Xbox_lock.unlock();
 		W_Xbox_lock.lock();
@@ -280,7 +280,9 @@ void ModeSwitcher::planCallback(const geometry_msgs::Twist::ConstPtr& pose)
 				W_planner_lock.lock();
 					finaltwist.angular.z=W_Planner;
 					finaltwist.linear.x=Vx_Planner;
-                //    cout;
+                //    cout; 		
+					finaltwist.linear.y=Vy_Xbox;
+					finaltwist.linear.z=Vz_Xbox;
 					cout<<endl;
 			
 				W_planner_lock.unlock();

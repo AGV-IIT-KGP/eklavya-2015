@@ -55,7 +55,7 @@ void VxPid::vxTargetUpdateCallback(const geometry_msgs::Twist::ConstPtr& msg) {
 	Vy_t=(msg->linear.y);
 	Vz_t=(msg->linear.z);
 	//	Vs_t= (msg->linear.x )/( cos( (Alpha_a * PI)/180));
-	if(std::signbit(Vy_t)) 
+	if(std::signbit(Vz_t)) 
 			manualmode = 1;
     else
 			manualmode=0;
