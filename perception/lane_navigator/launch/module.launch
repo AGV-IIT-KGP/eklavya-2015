@@ -3,5 +3,6 @@
 <launch>
     <node pkg="lane_navigator" type="lane_navigator" name="lane_navigator">
     </node>
+    <node pkg="lane_navigator" type="lane_tf_publisher" name="lane_tf_publisher">
+    </node>
 </launch>
-    

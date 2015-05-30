@@ -131,7 +131,7 @@ void LaneDetector::setupComms() {
     ros::NodeHandle node_handle;
     image_transport::ImageTransport image_transport(node_handle);
     lanes_publisher = image_transport.advertise(published_topic_name.c_str(), 2);
-    cloud_pub = node_handle.advertise<pcl::PointCloud<pcl::PointXYZ> >("/cloud_data", 1000);
+    cloud_pub = node_handle.advertise<pcl::PointCloud<pcl::PointXYZ> >("/lanes", 1000);
     image_subscriber = image_transport.subscribe(subscribed_topic_name, 2, &LaneDetector::detectLanes, this);
     std::cout << "Communications started with : " << std::endl
             << "\tSubscriber topic : " << subscribed_topic_name << std::endl
