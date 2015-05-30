@@ -1,4 +1,6 @@
 #include <robot_localization/odom_and_imu.hpp>
+#include <std_msgs/Float64.h>
+#include <math.h>
 #define PI 3.1415926
 
 using namespace ros;
@@ -18,13 +20,8 @@ void OdometryImuCombiner::odomCallback(const geometry_msgs::Twist msg)
 {
   if (ros::ok())
 {
-
-    vr=msg.linear.y;//right_vel;
-    vl=msg.linear.x;//left_vel;
-
     vr=msg.linear.y;
     vl=msg.linear.x;
-
     v=(vl+vr)/2;
     
   }
@@ -41,7 +38,7 @@ void OdometryImuCombiner::imuCallback(sensor_msgs::Imu imu_msg) {
   }
 }
 
-void OdometryImuCombiner::publishUsing(ros::Publisher& publisher) {
+void OdometryImuCombiner::publishUsing(ros::Publisher& publisher,ros::Publisher& yaw_pub) {
 
    current_time = ros::Time::now();
    double dt = (current_time - last_time).toSec();
@@ -59,7 +56,7 @@ void OdometryImuCombiner::publishUsing(ros::Publisher& publisher) {
 
    ROS_INFO("yaw %lf ", yaw);
 
-    
+   
    vx=v*cos(delta_th);
    vy=v*sin(delta_th);
 
@@ -120,6 +117,9 @@ void OdometryImuCombiner::publishUsing(ros::Publisher& publisher) {
     last_time = current_time;
     prev_yaw=yaw;
     publisher.publish(odom);
+    std_msgs::Float64 theta;
+    theta.data=fmod(th,360.0);
+    yaw_pub.publish(theta);
     ROS_INFO("the %f ", odom.pose.pose.position.x);
 }
 
@@ -132,12 +132,13 @@ int main(int argc, char** argv){
     //ros::Subscriber odom_sub = n.subscribe<nav_msgs::Odometry>("odom", 50, &OdometryImuCombiner::odomCallback, &combiner);
     ros::Subscriber imu_sub = n.subscribe<sensor_msgs::Imu>("vn_ins/imu", 50, &OdometryImuCombiner::imuCallback, &combiner);
     ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom1", 50);
+    ros::Publisher yaw_pub = n.advertise<std_msgs::Float64>("vn_ins/yaw",50);
 
     ros::Rate rate(40);
 
     while(ros::ok()) {
         spinOnce();
-        combiner.publishUsing(odom_pub);
+        combiner.publishUsing(odom_pub,yaw_pub);
         rate.sleep();
     }
 

@@ -49,15 +49,19 @@ bool vectorNav::fetch() {
         unsigned char gpsFix, numberOfSatellites;
         float speedAccuracy, timeAccuracy, attitudeUncertainty, positionUncertainty, velocityUncertainty, temperature, pressure;
         double gpsTime, latitude, longitude, altitude;
-        VnVector3 magnetic, acceleration, angularRate, ypr, latitudeLongitudeAltitude, nedVelocity, positionAccuracy;
-        vn200_getGpsSolution(&vn200, &gpsTime, &gpsWeek, &gpsFix, &numberOfSatellites, &latitudeLongitudeAltitude, &nedVelocity, &positionAccuracy, &speedAccuracy, &timeAccuracy);
-         ROS_INFO("Triangulating from %d satellites", numberOfSatellites);
+        VnVector3 magnetic, acceleration, angularRate, ypr, latitudeLognitudeAltitude, nedVelocity, positionAccuracy;
 
-        //vn200_getInsSolution(&vn200, &gpsTime, &gpsWeek, &status, &ypr, &latitudeLongitudeAltitude, &nedVelocity, &attitudeUncertainty, &positionUncertainty, &velocityUncertainty);
-        
-        _gps.latitude = latitudeLongitudeAltitude.c0;
-        _gps.longitude = latitudeLongitudeAltitude.c1;
-        _gps.altitude = latitudeLongitudeAltitude.c2;
+        vn200_getGpsSolution(&vn200, &gpsTime, &gpsWeek, &gpsFix, &numberOfSatellites, &latitudeLognitudeAltitude, &nedVelocity, &positionAccuracy, &speedAccuracy, &timeAccuracy);
+        ROS_INFO("Triangulating from %d satellites", numberOfSatellites);
+        /*vn200_getInsState(&vn200, &vn200_attitude, &latitudeLognitudeAltitude, &nedVelocity, &vn200_acceleration, &vn200_angular_rate);
+
+        yaw = vn200_attitude.yaw;
+
+        _twist.angular.z=vn200_angular_rate.c2;*/
+
+        _gps.latitude = latitudeLognitudeAltitude.c0;
+        _gps.longitude = latitudeLognitudeAltitude.c1;
+        _gps.altitude = latitudeLognitudeAltitude.c2;
     }
 
     _yaw.data = -yaw;
@@ -72,11 +76,10 @@ bool vectorNav::fetch() {
 }
 
 void vectorNav::publish(int frame_id) {
-    
     if (!imu_only) {
         fix_publisher.publish(_gps);
     }
-    yaw_publisher.publish(_yaw);
+    //yaw_publisher.publish(_yaw);
     twist_pub.publish(_twist);
     imu_pub.publish(_imu);
 }
@@ -86,7 +89,7 @@ void vectorNav::initializeParameters() {
     message_queue_size = 10;
     node_name = std::string("vn_ins");
     fix_topic_name = node_name + std::string("/fix");
-    yaw_topic_name = node_name + std::string("/yaw");
+    //yaw_topic_name = node_name + std::string("/yaw");
     twist_topic_name = node_name + std::string("/twist");
     imu_topic_name = node_name + std::string("/imu");
    //vn100_com_port = std::string("/dev/serial/by-id/usb-FTDI_USB-RS232_Cable_FTVJUC0O-if00-port0");
@@ -101,7 +104,6 @@ void vectorNav::initializeParameters() {
     node_handle->getParam("imu_topic_name", imu_topic_name);
     //node_handle->getParam("vn100_com_port", vn100_com_port);
     node_handle->getParam("vn200_com_port", vn200_com_port);
-
    
 }
 
@@ -110,7 +112,7 @@ void vectorNav::initializeParameters(int argc, char** argv) {
     message_queue_size = 10;
     node_name = std::string("/vn_ins") + std::string(argv[1]);
     fix_topic_name = node_name + std::string(argv[1]) + std::string("/fix");
-    yaw_topic_name = node_name + std::string(argv[1]) + std::string("/yaw");
+    //yaw_topic_name = node_name + std::string(argv[1]) + std::string("/yaw");
     twist_topic_name = node_name + std::string(argv[1]) + std::string("/twist");
     imu_topic_name = node_name + std::string(argv[1]) + std::string("/imu");
 
@@ -120,7 +122,7 @@ void vectorNav::initializeParameters(int argc, char** argv) {
 
 void vectorNav::setupCommunications() {
     fix_publisher = node_handle->advertise<sensor_msgs::NavSatFix>(fix_topic_name.c_str(), message_queue_size);
-    yaw_publisher = node_handle->advertise<std_msgs::Float64>(yaw_topic_name.c_str(), message_queue_size);
+    //yaw_publisher = node_handle->advertise<std_msgs::Float64>(yaw_topic_name.c_str(), message_queue_size);
     twist_pub = node_handle->advertise<geometry_msgs::Twist>(twist_topic_name.c_str(), message_queue_size);
     imu_pub = node_handle->advertise<sensor_msgs::Imu>(imu_topic_name.c_str(), message_queue_size);
 }
@@ -130,7 +132,7 @@ int main(int argc, char** argv) {
         printf("Usage : <name> <id_no> <COM_PORT>\n");
     }
 
-    double loop_rate = 10;
+    double loop_rate = 40;
     int frame_id;
     frame_id = 0;
     vectorNav *vectornav = new vectorNav(argc, argv);
