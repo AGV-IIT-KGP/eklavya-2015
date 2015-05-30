@@ -1,0 +1,52 @@
+# The basic motion primitives to try to capture
+#  outer dict contains the starting angle,
+#  the inner arrays contain dx, dy and dtheta
+# These only need to cover the space between x=y and y=0; they will be
+#  rotated and mirrored to cover the remainder of the space
+primitives:
+  0:
+  - [1, 0, 0]
+#  - [2, 0, 0]
+#  - [3, 0, 0]
+  - [4, 0, 0]
+#  - [5, 0, 0]
+#  - [6, 0, 0]
+#  - [7, 0, 0]
+  - [6, 1, 0]
+  - [7, 2, 0]
+  - [6, 1, 1]
+  - [5, 2, 2]
+  1:
+  - [2, 1, 0]
+  - [3, 1, 0]
+#  - [4, 1, 0]
+#  - [5, 1, 0]
+  - [5, 3, 0]
+#  - [6, 1, 0]
+  - [6, 4, 0]
+  - [6, 5, 0]
+#  - [7, 1, 0]
+  - [3, 2, 1]
+  - [4, 1, -1]
+  - [5, 5, 2]
+#  - [6, 5, 2]
+#  - [7, 5, 2]
+  - [5, 0, -2]
+  - [7, 0, -2]
+  2:
+  - [1, 1, 0]
+#  - [2, 2, 0]
+#  - [3, 3, 0]
+  - [4, 4, 0]
+#  - [5, 5, 0]
+#  - [6, 6, 0]
+#  - [7, 7, 0]
+  - [4, 3, 0]
+#  - [5, 3, 0]
+  - [7, 4, 0]
+  - [4, 3, -1]
+  - [6, 3, -2]
+# The optimizer seed. these are the parameters for the sharpest transition
+# curve, but it's effectively magic.
+seed: [0.25, 0.5, 2.5]
+num_angles: 16
