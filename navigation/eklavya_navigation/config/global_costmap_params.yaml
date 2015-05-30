@@ -21,6 +21,6 @@ global_costmap:
 
    obstacle_layer:
     scan:
-      sensor_frame: laser_link
+      sensor_frame: laser
       topic: /scan
       data_type: LaserScan

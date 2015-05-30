@@ -61,7 +61,7 @@ FSM(High_Level_Planner)
                 FSM_ON_CONDITION(navigator == nose_navigator && is_test_mode==1, FSM_NEXT(test_nose_navigator));
                 FSM_ON_CONDITION(navigator == lane_navigator && is_test_mode==1, FSM_NEXT(test_lane_navigator));
                 FSM_ON_CONDITION(navigator == waypoint_navigator && is_test_mode==1, FSM_NEXT(test_waypoint_navigator));
-            }           
+            }
         }
 
         FSM_STATE(test_nose_navigator)
@@ -94,7 +94,7 @@ FSM(High_Level_Planner)
 
         FSM_STATE(non_test_mode)
         {
-            
+
 
             FSM_TRANSITIONS
             {
@@ -118,11 +118,11 @@ FSM(High_Level_Planner)
         FSM_STATE(non_test_waypoint_navigator)
         {
             FSM_CALL_TASK(waypointNavigator)
-            
+
             FSM_TRANSITIONS
             {
                 FSM_ON_CONDITION(nml_flag == 1 && is_test_mode==0, FSM_NEXT(non_test_waypoint_navigator));
-                FSM_ON_CONDITION(nml_flag == 0 && is_test_mode==0, FSM_NEXT(non_test_lane_navigator));                                
+                FSM_ON_CONDITION(nml_flag == 0 && is_test_mode==0, FSM_NEXT(non_test_lane_navigator));
             }
         }
     }
@@ -146,9 +146,9 @@ decision_making::TaskResult noseTask(string name, const FSMCallContext& context,
 
 
     ac.sendGoal(goal);
-  
+
     ac.waitForResult();
-   
+
     if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
         return decision_making::TaskResult::SUCCESS();
@@ -158,7 +158,7 @@ decision_making::TaskResult noseTask(string name, const FSMCallContext& context,
         ROS_INFO("No data received");
         return decision_making::TaskResult::SUCCESS();
     }*/
-        
+
     final_goal = strategy_planner.getNoseTarget();
 
     ROS_INFO("final_goal.x = %f, final_goal.y = %f",final_goal.pose.position.x, final_goal.pose.position.y);
@@ -168,7 +168,7 @@ decision_making::TaskResult noseTask(string name, const FSMCallContext& context,
 
     return decision_making::TaskResult::SUCCESS();
 
-        
+
 
 
 }
@@ -183,9 +183,9 @@ decision_making::TaskResult laneTask(string name, const FSMCallContext& context,
 
 
     ac.sendGoal(goal);
-  
+
     ac.waitForResult();*/
-   
+
     //if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     //{
         //return decision_making::TaskResult::SUCCESS();
@@ -193,7 +193,7 @@ decision_making::TaskResult laneTask(string name, const FSMCallContext& context,
    /* else
     {
         ROS_INFO("No data received lane");
-        
+
         return decision_making::TaskResult::SUCCESS();
     }*/
     final_goal = strategy_planner.getLaneTarget();
@@ -209,7 +209,7 @@ decision_making::TaskResult laneTask(string name, const FSMCallContext& context,
 
 decision_making::TaskResult waypointTask(string name, const FSMCallContext& context, EventQueue& eventQueue)
 {
-	/*ROS_INFO("Entered waypoint task......\n");
+    /*ROS_INFO("Entered waypoint task......\n");
     MoveBaseClient ac("move_base", true);
 
     goal.target_pose = strategy_planner.getWaypointTarget();
@@ -218,9 +218,9 @@ decision_making::TaskResult waypointTask(string name, const FSMCallContext& cont
 
     ROS_INFO("x = %f, y = %f", goal.target_pose.pose.position.x, goal.target_pose.pose.position.y);
     ac.sendGoal(goal);
-  	ROS_INFO("Goal sent....");
+    ROS_INFO("Goal sent....");
     ac.waitForResult(ros::Duration(5.0));
-   	ROS_INFO("got result....");
+    ROS_INFO("got result....");
     if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
         return decision_making::TaskResult::SUCCESS();
@@ -228,7 +228,7 @@ decision_making::TaskResult waypointTask(string name, const FSMCallContext& cont
     else
     {
         ROS_INFO("No data received waypoint");
-        
+
         return decision_making::TaskResult::SUCCESS()
         /* move_base_msgs::MoveBaseActionGoal action_goal;
 
@@ -237,18 +237,18 @@ decision_making::TaskResult waypointTask(string name, const FSMCallContext& cont
     action_goal.header.stamp = ros::Time::now();
     action_goal.goal_id.stamp = ros::Time::now();
     action_goal.goal_id.id = "action_goal";}*/
-    
+
     final_goal = strategy_planner.getWaypointTarget();
 
     ROS_INFO("final_goal.x = %f, final_goal.y = %f",final_goal.pose.position.x, final_goal.pose.position.y);
 
-   
+
 
     pub_target.publish(final_goal);
     ros::Rate loop_rate(loop_rate_hz);
     loop_rate.sleep();
     return decision_making::TaskResult::SUCCESS();
-    
+
 }
 
 void setTestMode(std_msgs::Bool test_mode) 
@@ -273,13 +273,13 @@ int main(int argc, char** argv)
     ros::NodeHandle nh;
     RosEventQueue eventQueue;
 
-    //ros::Subscriber sub_nml_flag = nh.subscribe("nml_flag", buffer_size, setNmlFlag);
-   // ros::Subscriber sub_confidence = nh.subscribe("confidence", buffer_size, setConfidence);
-    //ros::Subscriber sub_test_mode = nh.subscribe("test_mode", buffer_size, setTestMode);
-   // ros::Subscriber sub_nose_navigator_proposed_target = nh.subscribe("/nose_navigator/proposed_target", buffer_size, &Strategy_Planner::setNoseTarget, &strategy_planner);
-     ros::Subscriber sub_waypoint_navigator_proposed_target = nh.subscribe("/waypoint_navigator/proposed_target", buffer_size, &Strategy_Planner::setWaypointTarget, &strategy_planner);
-   // ros::Subscriber sub_lane_navigator_proposed_target = nh.subscribe("/lane_navigator/proposed_target", buffer_size, &Strategy_Planner::setLaneTarget, &strategy_planner);
-     pub_target = nh.advertise<geometry_msgs::PoseStamped>("move_base_simple/goal", buffer_size);
+    ros::Subscriber sub_nml_flag = nh.subscribe("waypoint_selector/nml_flag", buffer_size, setNmlFlag);
+    ros::Subscriber sub_confidence = nh.subscribe("lane_navigator/confidence", buffer_size, setConfidence);
+    ros::Subscriber sub_test_mode = nh.subscribe("test_mode", buffer_size, setTestMode);
+    ros::Subscriber sub_nose_navigator_proposed_target = nh.subscribe("/nose_navigator/proposed_target", buffer_size, &Strategy_Planner::setNoseTarget, &strategy_planner);
+    ros::Subscriber sub_waypoint_navigator_proposed_target = nh.subscribe("/waypoint_navigator/proposed_target", buffer_size, &Strategy_Planner::setWaypointTarget, &strategy_planner);
+    ros::Subscriber sub_lane_navigator_proposed_target = nh.subscribe("/lane_navigator/proposed_target", buffer_size, &Strategy_Planner::setLaneTarget, &strategy_planner);
+    pub_target = nh.advertise<geometry_msgs::PoseStamped>("move_base_simple/goal", buffer_size);
 
     LocalTasks::registrate("noseNavigator", noseTask);
     LocalTasks::registrate("laneNavigator", laneTask);
@@ -288,7 +288,7 @@ int main(int argc, char** argv)
     ros::AsyncSpinner spinner(2);
     spinner.start();
 
-  
+
     ROS_INFO("Starting fsm machine...");
 
     eventQueue.async_spin();
