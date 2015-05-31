@@ -22,7 +22,7 @@ geometry_msgs::PoseStamped new_msg;
 //queue<geometry_msgs::Pose2D> temp;
 int counter=0;
 
-geometry_msgs::Pose2D* temp=new geometry_msgs::Pose2D [4];
+geometry_msgs::Pose2D* temp=new geometry_msgs::Pose2D [3];
 
 geometry_msgs::PoseStamped convert_Pose2D_to_PoseStamped(geometry_msgs::Pose2D pose2d){
     geometry_msgs::PoseStamped pose_stamp;
@@ -276,13 +276,13 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
     int valtheta=target_pose.theta;
     for(int i=0;i<counter;i++)
     {
-        valx+=(i+2)*(temp[i]).x;
-        valy+=(i+2)*(temp[i]).y;
-        valtheta+=(i+2)*(temp[i]).theta;
+        valx+=(i+1)*(temp[i]).x;
+        valy+=(i+1)*(temp[i]).y;
+        valtheta+=(i+1)*(temp[i]).theta;
     }
-    target_pose.x=int(valx/15);
-    target_pose.y=int(valy/15);
-    target_pose.theta=int(valtheta/15);
+    target_pose.x=int(valx/7);
+    target_pose.y=int(valy/7);
+    target_pose.theta=int(valtheta/7);
 
     target.x=target_pose.x;
     target.y=origin.y - target_pose.y;
@@ -319,7 +319,7 @@ void publishTarget(const sensor_msgs::ImageConstPtr msg ) {
     msge = findTarget(img);
     geometry_msgs::Pose2D temp1,temp2;
     temp1=msge;
-    for(int i=0;i<4;i++)
+    for(int i=0;i<3;i++)
     {
         temp2=temp[i];
         temp[i]=temp1;
@@ -332,7 +332,7 @@ void publishTarget(const sensor_msgs::ImageConstPtr msg ) {
        cv::waitKey(33);
        ROS_INFO("%f %f %f ", msge.x, msge.y, msge.theta);
     }
-    if(counter<4)
+    if(counter<3)
         counter++;
 }
 
