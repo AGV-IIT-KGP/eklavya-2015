@@ -23,4 +23,4 @@ link_directories(
   ${GAZEBO_LIBRARY_DIRS}
 )
 add_executable(encoder_publisher src/encoder_publisher.cpp)
-target_link_libraries( encoder_publisher ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+target_link_libraries( encoder_publisher )

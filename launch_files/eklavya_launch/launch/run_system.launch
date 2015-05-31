@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="hokuyo_node" type="hokuyo_node" name="hokuyo_node" args="hokuyo_node1" output="screen" cwd="node">
+  </node>
+  <include file="$(find vn_ins)/launch/module.launch"/>
+  <include file="$(find SLAM)/launch/final2.launch"/>
+  <include file="$(find waypoint_selector)/launch/module.launch"/>
+  <include file="$(find lane_detector)/launch/perception.launch"/>
+  <include file="$(find high_level_planner_igvc)/launch/high_level_planner_igvc.launch"/>
+  <include file="$(find eklavya_launch)/launch/odom_navigation_demo.launch"/>
+  <!--<include file="$(find eklavya_launch)/view_navigation.launch"/>-->
+</launch>
