@@ -2,6 +2,9 @@
 #include "tf/transform_listener.h"
 #include "tf/message_filter.h"
 #include "message_filters/subscriber.h"
+#include <tf/transform_listener.h>
+#include <tf/tf.h>
+#include <geometry_msgs/PoseStamped.h>
 
 class PoseDrawer
 {
@@ -26,12 +29,13 @@ private:
     geometry_msgs::PoseStamped point_out;
     try
     {
-      tf_.transformPoint(target_frame_, *point_ptr, point_out);
+      std::string str="odom";
+      tf_.transformPose(str, *point_ptr, point_out);
 
       ROS_INFO("(x:%f y:%f z:%f)\n",
-             point_out.point.x,
-             point_out.point.y,
-             point_out.point.z);
+             point_out.pose.position.x,
+             point_out.pose.position.y,
+             point_out.pose.position.z);
     }
     catch (tf::TransformException &ex)
     {
