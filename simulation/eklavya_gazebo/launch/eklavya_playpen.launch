@@ -3,8 +3,9 @@
 <launch>
   <arg name="ns" value="/" />
   <arg name="use_sim_time" value="true"/>
-  <!--<remap from="/eklavya/cmd_vel" to="/cmd_vel" />-->
-  
+  <remap from="/gps/fix" to="/vn_ins/fix" />
+  <remap from="/ground_truth/odom" to="/odometry/filtered" />
+
  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find eklavya_gazebo)/worlds/clearpath_playpen"/> <!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
@@ -14,7 +15,7 @@
     <arg name="headless" value="false"/>
     <arg name="debug" value="false"/>
   </include>
-  
+
   <include file="$(find eklavya_gazebo)/launch/base.urdf.gazebo.launch">
     <arg name="gps_enabled" value="true"/>
     <arg name="imu_enabled" value="true"/>
