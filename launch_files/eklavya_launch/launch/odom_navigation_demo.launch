@@ -3,12 +3,12 @@
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
       <!--<param name="base_local_planner" value="ackermann_local_planner/AckermannPlannerROS"/>-->
       <!--<param name="base_global_planner" value="global_planner/GlobalPlanner"/>-->
-      <param name="base_global_planner" value="navfn/NavfnROS"/>
+      <!--<param name="base_global_planner" value="navfn/NavfnROS"/>-->
       <param name="clearing_rotation_allowed" value="false"/>
       <!--<param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/>-->
       <!--<param name="base_global_planner" value="carrot_planner/CarrotPlanner"/>-->
-      <!--<rosparam file="$(find dagny_nav_launch)/dagny_nav.yaml" command="load"/>-->
-      <!--<param name="SBPLLatticePlanner/primitive_filename" value="$(find dagny_nav_launch)/dagny.mprim" />-->
+      <rosparam file="$(find dagny_nav_launch)/dagny_nav.yaml" command="load"/>
+      <param name="SBPLLatticePlanner/primitive_filename" value="$(find dagny_nav_launch)/dagny.mprim" />
     <rosparam file="$(find eklavya_navigation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find eklavya_navigation)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
     <rosparam file="$(find eklavya_navigation)/config/local_costmap_params.yaml" command="load" />
