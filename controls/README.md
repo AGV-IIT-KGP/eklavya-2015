@@ -25,4 +25,5 @@ Main launch file for controls package is fullcontrol.launch, has parameters for 
 
 #Xbee Config
 Already two sets of Xbees have been configured. They can be configured in Windows using X-CTU (old 5.2 version to configure) the XBees. Both the configuration have been stored as .pro files in a separate XBee folder, just load  to set profile after installing software.
+To program XBee, short 5v and reset of Arduino Mega and supply 3.3V and GND to XBee, then connect TX to corresponding RX and RX to corresponding TX. Then run X-CTU to program XBee
 
