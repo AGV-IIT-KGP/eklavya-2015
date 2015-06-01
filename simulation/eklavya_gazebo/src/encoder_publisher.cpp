@@ -25,8 +25,8 @@ int main(int argc, char **argv){
     node_handle.getParam("encoder_topic_name", encoder_topic_name);
     node_handle.getParam("joint_state_topic_name", joint_state_topic_name);
 
-    encoder_data_publisher = node_handle.advertise(encoder_topic_name.c_str(),1000);
-    joint_state_subscriber=node_handle.subscribe(joint_state_topic_name.c_str(),1000,&callBack);
+    encoder_data_publisher = node_handle.advertise<geometry_msgs::Twist>(encoder_topic_name,1000);
+    joint_state_subscriber=node_handle.subscribe(joint_state_topic_name,1000,&callBack);
     ros::spin();
 
 }
