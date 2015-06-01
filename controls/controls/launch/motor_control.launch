@@ -1,0 +1,4 @@
+<launch>
+	<include file="$(find controls)/launch/fullcontrol.launch" />
+	<include file="$(find eklavya4_roboteq)/launch/roboteq_launch.launch" />
+</launch>
