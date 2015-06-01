@@ -11,9 +11,14 @@ Step #4) Run step2.sh in the same format as step1 (You need to go back to that d
 Step #5) The launch file opens up in gedit. Go to parameter "training_data_file" and set value equal
 		to the trained file name.
 
+
+if not using the bash files, take picture, store in data folder, go there and rosrun lane_detectr generatesamples "picname". When finished with ssampling, rosrun lane_detector svmTrain "trainfile" and also change he trainfile param in launch file(module.launch). 
+
+***(Sometimes training works better with rosrun lane_detector svmTrain "trainfile" -s 0 -t 1)***
+
 Using lane_detector:-
 
-Step #1) run "roslaunch lane_detector perception.launch"
+Step #1) run "roslaunch lane_detector perception.launch" (now all nodes can be run by eklavya_launch run_system.launch)
 
 
 IPT Caliberation:-
@@ -28,7 +33,6 @@ Debug modes:-
 						Use debug mode "0" when running the actual bot.
 						Use debug mode "5" for ipt caliberation
 						Use debug mode "8" for normal testing
-
 						Use time_functions = 2 for fps calculation, 0 otherwise.
 
 while running the program in the finals, comment out all the "cv::imshow" and "cv::namedWindow" lines in the lane_navigator.cpp and logitech_camera.cpp and use debug mode 0 in lane_detector module.launch.
