@@ -9,6 +9,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
   std_msgs
+  gps_common
+  tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -81,10 +83,10 @@ find_package(OpenCV REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include ${gps_common_INCLUDE_DIRS}
 #  LIBRARIES waypoint_selector
-#  CATKIN_DEPENDS geometry_msgs opencv2 roscpp sensor_msgs std_msgs
-#  DEPENDS system_lib
+  CATKIN_DEPENDS geometry_msgs tf roscpp sensor_msgs std_msgs
+  DEPENDS system_lib
 )
 
 ###########
@@ -95,7 +97,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 #include_directories(
-# ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS}
+#${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} 
 #)
 
 ## Declare a cpp library
@@ -162,7 +164,7 @@ catkin_package(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-include_directories( include ${OpenCV_INCLUDE_DIRS})
+include_directories( include ${OpenCV_INCLUDE_DIRS} ${gps_common_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
 # ${catkin_INCLUDE_DIRS}
 link_directories(include ${OpenCV_INCLUDE_DIRS})
 add_executable(waypoint_selector src/main.cpp src/waypoint_selector.cpp)
