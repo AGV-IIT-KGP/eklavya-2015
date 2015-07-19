@@ -48,6 +48,19 @@ void LaneDetector::interpret() {
 
     result=shadowRemoval(result);
     cv::imshow("shadowRemoved",result);
+    result = inversePerspectiveTransform(result);
+    if (time_functions == 2) {
+        gettimeofday(&tval_after, NULL);
+        time_elapsed = tval_after.tv_sec + (tval_after.tv_usec / 1000000.0) - (tval_before.tv_sec + (tval_before.tv_usec / 1000000.0));
+        total_time_elapsed += time_elapsed;
+        if (time_functions == 2) {
+            std::cout << "InversePerspectiveTransform FPS : " << 1. / time_elapsed << std::endl;
+        }
+    }
+    if (debug_mode > 0) {
+        cv::imshow(ipt_output_window, result);
+        cv::waitKey(wait_time);
+    }
     cvtColor(result,result,CV_BGR2HSV);
 
     result = grassRemoval(result);
@@ -68,19 +81,7 @@ void LaneDetector::interpret() {
     if (time_functions == 2) {
         gettimeofday(&tval_before, NULL);
     }
-    result = inversePerspectiveTransform(result);
-    if (time_functions == 2) {
-        gettimeofday(&tval_after, NULL);
-        time_elapsed = tval_after.tv_sec + (tval_after.tv_usec / 1000000.0) - (tval_before.tv_sec + (tval_before.tv_usec / 1000000.0));
-        total_time_elapsed += time_elapsed;
-        if (time_functions == 2) {
-            std::cout << "InversePerspectiveTransform FPS : " << 1. / time_elapsed << std::endl;
-        }
-    }
-    if (debug_mode > 0) {
-        cv::imshow(ipt_output_window, result);
-        cv::waitKey(wait_time);
-    }
+
     if (time_functions > 0) {
         gettimeofday(&tval_before, NULL);
     }
