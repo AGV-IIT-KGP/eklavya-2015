@@ -5,7 +5,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-  agv_framework
+  #agv_framework
   cv_bridge
   #opencv2
   image_transport
@@ -82,8 +82,13 @@ add_library(laneDetector
                      src/detector/obstacleRemoval.cpp
                      src/detector/preprocessing.cpp
 		     src/detector/shadowRemoval.cpp
-		     src/detector/cloudpoint.cpp)
+		     src/detector/cloudpoint.cpp
+                     src/environment/Environment.cpp
+                     src/environment/Interpreter.cpp
+                     src/environment/Model.cpp
+                     src/environment/Sensor.cpp)
 target_link_libraries(laneDetector svm ${OpenCV_LIBRARIES} ${catkin_LIBRARIES})
 
 add_executable(lane_detector src/laneDetectorNode.cpp)
-target_link_libraries(lane_detector laneDetector agv_framework  ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES})
+#target_link_libraries(lane_detector laneDetector agv_framework  ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES})
+target_link_libraries(lane_detector laneDetector ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES})
