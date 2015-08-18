@@ -5,4 +5,6 @@
     </node>
     <node pkg="lane_navigator" type="lane_tf_publisher" name="lane_tf_publisher">
     </node>
+    <node pkg="lane_navigator" type="lane_target_odom" name="lane_target_odom">
+    </node>
 </launch>
