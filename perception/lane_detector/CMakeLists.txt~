@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   #opencv2
   image_transport
   roslib
+  OpenCV
 )
 find_package(OpenCV REQUIRED)
 include_directories(  ${catkin_INCLUDE_DIRS}  ${OpenCV_INCLUDE_DIRS} )
