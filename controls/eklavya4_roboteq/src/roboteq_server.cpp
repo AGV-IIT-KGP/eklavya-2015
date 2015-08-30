@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "ros/ros.h"
-#include "eklavya4_roboteq/SetSpeed.h" 
+#include "eklavya4_roboteq/SetSpeed.h"
 
 #include "eklavya4_roboteq/RoboteqDevice.h"
 #include "eklavya4_roboteq/ErrorCodes.h"
