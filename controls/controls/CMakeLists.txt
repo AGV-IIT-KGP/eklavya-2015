@@ -23,7 +23,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## Declare a catkin package
 catkin_package(
-#	INCLUDE_DIRS include
+	INCLUDE_DIRS include
 	LIBRARIES controls
 	CATKIN_DEPENDS roscpp joy rospy geometry_msgs sensor_msgs std_msgs diagnostic_updater joy 
 	)
@@ -32,7 +32,7 @@ catkin_package(
 
 ## Build talker and listener
 include_directories(
-    include
+    	include
 	${catkin_INCLUDE_DIRS}
 	${roscpp_INCLUDE_DIRS}
 	${rospy_INCLUDE_DIRS}

@@ -44,7 +44,9 @@
         name="$(arg example_name)" 
         pkg="$(arg package)" 
         type="$(arg example_name)" 
-        output="screen" />
+        output="screen" cwd="node">
+        <param name="test_mode" type="bool" value="false"/>
+    </node>
 
 
     <!-- ================================================================== -->
