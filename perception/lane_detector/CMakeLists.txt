@@ -89,4 +89,4 @@ add_executable(lane_detector src/laneDetectorNode.cpp)
 target_link_libraries(lane_detector laneDetector agv_framework  ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES})
 
 catkin_add_gtest(test_binary tests/test_binary.cpp)
-target_link_libraries(test_binary ${OpenCV_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(test_binary laneDetector agv_framework ${OpenCV_LIBRARIES} ${catkin_LIBRARIES})
