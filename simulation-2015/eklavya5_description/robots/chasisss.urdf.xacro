@@ -370,8 +370,8 @@ xmlns:xacro="http://ros.org/wiki/xacro"
 <!-- Hokuyo Laser-->
 <joint name="hokuyo_joint" type="fixed">
     <axis xyz="0 1 0" />
-    <origin xyz="0.05 0 0.4" rpy="0 0 0"/>
-    <parent link="Steering"/>
+    <origin xyz="-0.2 0 0.8" rpy="0 0 0"/>
+    <parent link="base_link"/>
     <child link="hokuyo_link"/>
   </joint>
 
@@ -437,7 +437,7 @@ xmlns:xacro="http://ros.org/wiki/xacro"
 
 
 <!-- IMU-->
-    <sensor_imu parent="base_link" name="imu" colour="Blue" imu_px="0.192" imu_py="0.0" imu_pz="${0.01}" imu_or="0.0" imu_op="${-M_PI/2.0}" imu_oy="0.0" />
+    <sensor_imu parent="base_link" name="imu" colour="Blue" imu_px="-1" imu_py="0.0" imu_pz="0.8" imu_or="0.0" imu_op="${-M_PI/2.0}" imu_oy="0.0" />
     <gazebo reference="imu_link">
         <material>Gazebo/Blue</material>
     </gazebo>
@@ -447,9 +447,9 @@ xmlns:xacro="http://ros.org/wiki/xacro"
     <!-- GPS antenna/module -->
     <sensor_gps parent="base_link" name="gps"
           colour="White"
-          gps_px="0" 
+          gps_px="-0.8" 
           gps_py="0" 
-          gps_pz="0.14" 
+          gps_pz="0.8" 
           gps_or="0.0" 
           gps_op="0.0" 
           gps_oy="${M_PI}" 
