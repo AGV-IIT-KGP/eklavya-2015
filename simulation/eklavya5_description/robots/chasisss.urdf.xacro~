@@ -1,0 +1,396 @@
+<?xml version="1.0"?>
+
+<robot 
+  name="chasisss"
+  xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+xmlns:xacro="http://ros.org/wiki/xacro"
+>
+
+<xacro:include filename="$(find eklavya5_description)/sensors/imu.urdf.xacro" />
+<xacro:include filename="$(find eklavya5_description)/sensors/gps.urdf.xacro" />
+ <property name="M_PI" value="3.1415926535897931" />
+
+
+  <link
+    name = "base_link">
+  </link>
+  <link
+    name="Chassis">
+    <inertial>
+      <origin
+        xyz="0.51815 0.2035 0.46592" 
+        rpy="0 0 0" />
+      <mass
+        value="1.3372" />
+      <inertia
+        ixx="0.11623"
+        ixy="-0.003745"
+        ixz="-0.038661"
+        iyy="0.10504"
+        iyz="-0.010842"
+        izz="0.086997" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://eklavya5_description/meshes/Chassis.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://eklavya5_description/meshes/Chassis.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="base_link-Chassis"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 -1.25 -1.57" />
+    <parent
+      link="base_link" />
+    <child
+      link="Chassis" />
+  </joint>
+  <link
+    name="Steering">
+    <inertial>
+      <origin
+        xyz="0.074275 -0.0014324 0.24555"
+        rpy="0 0 0" />
+      <mass
+        value="0.50841" />
+      <inertia
+        ixx="0.012612"
+        ixy="-8.93E-06"
+        ixz="-0.00091193"
+        iyy="0.0089584"
+        iyz="0.00011487"
+        izz="0.0042882" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://eklavya5_description/meshes/Steering.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://eklavya5_description/meshes/Steering.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Chassis-Steering"
+    type="revolute">
+    <limit effort="1000.0" lower="0.0" upper="6.28" velocity="0.5"/>
+    <origin
+      xyz="0.20345 -0.10209 0.11102"
+      rpy="1.2673 0.51864 1.0548" />
+    <parent
+      link="Chassis" />
+    <child
+      link="Steering" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="Front Wheel">
+    <inertial>
+      <origin
+        xyz="8.9869E-09 -1.0254E-08 -0.037497"
+        rpy="0 0 0" />
+      <mass
+        value="7.4055" />
+      <inertia
+        ixx="0.096133"
+        ixy="3.1994E-09"
+        ixz="9.2164E-10"
+        iyy="0.096133"
+        iyz="-1.1006E-09"
+        izz="0.18557" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://eklavya5_description/meshes/Front Wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://eklavya5_description/meshes/Front Wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Steerring Wheel"
+    type="revolute">
+    <limit effort="1000.0" lower="0.0" upper="0.548" velocity="0.5"/>
+    <origin
+      xyz="0.086603 0.038 0.087837"
+      rpy="1.5708 0.78607 3.1416" />
+    <parent
+      link="Steering" />
+    <child
+      link="Front Wheel" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="Left Wheel">
+    <inertial>
+      <origin
+        xyz="4.0523E-15 0.057678 2.2204E-16"
+        rpy="0 0 0" />
+      <mass
+        value="6.735" />
+      <inertia
+        ixx="0.094856"
+        ixy="-4.3279E-17"
+        ixz="1.0408E-17"
+        iyy="0.18261"
+        iyz="-8.5267E-17"
+        izz="0.094856" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://eklavya5_description/meshes/Left Wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://eklavya5_description/meshes/Left Wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="LW-Chassis"
+    type="revolute">
+    <limit effort="1000.0" lower="0.0" upper="6.28" velocity="0.5"/>
+    <origin
+      xyz="0.23345 -0.80043 0.41447"
+      rpy="1.4533 -0.25456 0.43831" />
+    <parent
+      link="Chassis" />
+    <child
+      link="Left Wheel" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="Right Wheel">
+    <inertial>
+      <origin
+        xyz="-1.0103E-14 1.8874E-15 0.073368"
+        rpy="0 0 0" />
+      <mass
+        value="6.735" />
+      <inertia
+        ixx="0.094856"
+        ixy="-5.2042E-18"
+        ixz="-4.9061E-17"
+        iyy="0.094856"
+        iyz="1.6034E-17"
+        izz="0.18261" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://eklavya5_description/meshes/Right Wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://eklavya5_description/meshes/Right Wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="RW-Chassis"
+    type="revolute">
+    <limit effort="1000.0" lower="0.0" upper="6.28" velocity="0.5"/>
+    <origin
+      xyz="0.384 -0.80043 -0.10941"
+      rpy="-3.0808 -0.27332 -0.22183" />
+    <parent
+      link="Chassis" />
+    <child
+      link="Right Wheel" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      effort="0"
+      velocity="0" />
+  </joint>
+
+  <joint name="camera_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="0.05 0 0.5" rpy="0 0 0"/>
+    <parent link="Steering"/>
+    <child link="camera_link"/>
+  </joint>
+
+  <!-- Camera -->
+  <link name="camera_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+    <box size="0.05 0.05 0.05"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+<box size="0.05 0.05 0.05"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial> 
+  </link>
+
+  <gazebo reference="camera_link">
+    <sensor type="camera" name="camera1">
+      <update_rate>24.0</update_rate>
+      <camera name="head">
+        <horizontal_fov>1.23</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>300</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <!-- Noise is sampled independently per pixel on each frame.
+               That pixel's noise value is added to each of its color
+               channels, which at that point lie in the range [0,1]. -->
+          <mean>0.0</mean>
+          <stddev>0.007</stddev>
+        </noise>
+      </camera>
+      <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>0.0</updateRate>
+        <cameraName>eklavya</cameraName>
+        <imageTopicName>image_raw</imageTopicName>
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        <frameName>camera_link</frameName>
+        <hackBaseline>0.07</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+        <distortionT2>0.0</distortionT2>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+
+
+
+    <sensor_imu parent="base_link" name="imu" colour="Blue" imu_px="0.192" imu_py="0.0" imu_pz="${0.01}" imu_or="0.0" imu_op="${-M_PI/2.0}" imu_oy="0.0" />
+    <gazebo reference="imu_link">
+        <material>Gazebo/Blue</material>
+    </gazebo>
+
+    
+ 
+    <!-- GPS antenna/module -->
+    <sensor_gps parent="base_link" name="gps"
+          colour="White"
+          gps_px="0" 
+          gps_py="0" 
+          gps_pz="0.14" 
+          gps_or="0.0" 
+          gps_op="0.0" 
+          gps_oy="${M_PI}" 
+          dimX="0.16" dimY="0.16" dimZ="0.14"
+          />
+    <gazebo reference="gps_link">
+        <material>Gazebo/White</material>
+    </gazebo>
+
+  
+</robot>

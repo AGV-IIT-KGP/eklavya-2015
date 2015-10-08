@@ -1,6 +1,6 @@
 
 #include <iostream>
-#include "ros/ros.h"
+#include <ros/ros.h>
 #include <high_level_planner_igvc/FSM.h>
 #include <high_level_planner_igvc/ROSTask.h>
 #include <high_level_planner_igvc/DecisionMaking.h>
@@ -14,9 +14,10 @@
 using namespace decision_making;
 
 
-Navigators navigator = waypoint_navigator;
+Navigators navigator = lane_navigator;
 
-volatile bool is_confident, is_test_mode=1, nml_flag;
+volatile bool is_confident, nml_flag;
+bool is_test_mode=1;
 geometry_msgs::PoseStamped final_goal;
 
 //typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseActionGoal> MoveBaseClient;
@@ -271,15 +272,16 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "fsm_high_level_planner_igvc");
     ros_decision_making_init(argc, argv);
     ros::NodeHandle nh;
+    nh.getParam(std::string("/fsm_high_level_planner_igvc/test_mode"), is_test_mode);
     RosEventQueue eventQueue;
 
     ros::Subscriber sub_nml_flag = nh.subscribe("waypoint_selector/nml_flag", buffer_size, setNmlFlag);
     ros::Subscriber sub_confidence = nh.subscribe("lane_navigator/confidence", buffer_size, setConfidence);
-    ros::Subscriber sub_test_mode = nh.subscribe("test_mode", buffer_size, setTestMode);
     ros::Subscriber sub_nose_navigator_proposed_target = nh.subscribe("/nose_navigator/proposed_target", buffer_size, &Strategy_Planner::setNoseTarget, &strategy_planner);
     ros::Subscriber sub_waypoint_navigator_proposed_target = nh.subscribe("/waypoint_navigator/proposed_target", buffer_size, &Strategy_Planner::setWaypointTarget, &strategy_planner);
     ros::Subscriber sub_lane_navigator_proposed_target = nh.subscribe("/lane_navigator/proposed_target", buffer_size, &Strategy_Planner::setLaneTarget, &strategy_planner);
     pub_target = nh.advertise<geometry_msgs::PoseStamped>("move_base_simple/goal", buffer_size);
+    nh.getParam(std::string("/fsm_high_level_planner_igvc/test_mode"), is_test_mode);
 
     LocalTasks::registrate("noseNavigator", noseTask);
     LocalTasks::registrate("laneNavigator", laneTask);

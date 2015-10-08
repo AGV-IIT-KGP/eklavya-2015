@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="ns" value="/" />
+  <arg name="use_sim_time" value="true"/>
+  <!--<remap from="/eklavya5/cmd_vel" to="/cmd_vel" />-->
+  
+ <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find eklavya5_gazebo)/worlds/igvc_final.world"/><!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+
+    <include file="$(find eklavya5_gazebo)/launch/robot.launch" >
+  </include>
+
+  <!--
+  <include file="$(find eklavya5_gazebo)/launch/base.urdf.gazebo.launch">
+    <arg name="gps_enabled" value="true"/>
+    <arg name="imu_enabled" value="true"/>
+    <arg name="front_laser" value="true"/>
+  </include>-->
+</launch>

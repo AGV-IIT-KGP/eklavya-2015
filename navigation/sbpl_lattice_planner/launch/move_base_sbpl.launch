@@ -1,5 +1,6 @@
 <launch>
-
+  <remap from="/odom" to="/odometry/filtered"/>
+  <remap from="/cmd_vel" to="/cmd_vel_filtered"/>
   <node ns="local_costmap" name="voxel_grid_throttle" pkg="topic_tools" type="throttle" args="messages voxel_grid 3.0 voxel_grid_throttled" />
   <node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen">
     <param name="footprint_padding" value="0.01" />

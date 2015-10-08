@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+  <include
+    file="/opt/ros/indigo/share/gazebo_ros/launch/empty_world.launch" />
+  <param name="robot_description" textfile="$(find eklavya5_description)/robots/chasisss.urdf"/>
+  <node
+    name="tf_footprint_base"
+    pkg="tf"
+    type="static_transform_publisher"
+    args="0 0 0 0 0 0 chassis base_footprint 40" />
+  <node
+    name="spawn_model"
+    pkg="gazebo_ros"
+    type="spawn_model"
+    args="-file $(find eklavya5_description)/robots/chasisss.urdf -urdf -model chasisss"
+    output="screen" />
+  <include
+    file="$(find pr2_controller_manager)/controller_manager.launch" />
+  <node
+    name="fake_joint_calibration"
+    pkg="rostopic"
+    type="rostopic"
+    args="pub /calibrated std_msgs/Bool true" />
+</launch>

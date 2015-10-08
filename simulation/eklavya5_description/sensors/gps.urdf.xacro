@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<robot name="sensor_gps" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find eklavya5_description)/sensors/hector_gps_gazebo.urdf.xacro"/>
+ 
+  <xacro:macro name="sensor_gps" params="parent name colour gps_px gps_py gps_pz gps_or gps_op gps_oy dimX dimY dimZ">
+    <link name="${name}_link">
+      <inertial>
+        <mass value="0.10"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
+      </inertial>
+      <visual>
+	<origin xyz="0 0 0" rpy="0 0 0" />
+	<geometry>
+          <mesh filename="package://eklavya5_description/meshes/GPSAntennaScaledDown.dae" />
+	</geometry>
+	<material name="${colour}" />
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <box size="${dimX * 0.6} ${dimY * 0.6} ${dimZ * 0.6}"/>
+        </geometry>
+      </collision>
+    </link>
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+      <origin xyz="${gps_px} ${gps_py} ${gps_pz}" rpy="${gps_or} ${gps_op} ${gps_oy}"/>
+    </joint>
+
+  <!-- gps sensor for simulation -->
+  <xacro:eklavya_sim_gpssensor 
+      name="${name}" />
+  </xacro:macro>
+
+</robot>
