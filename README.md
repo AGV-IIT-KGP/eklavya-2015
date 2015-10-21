@@ -19,3 +19,25 @@
 |       Parameter  |    igvc_nav     |         minimal    |
 |------------------|:---------------:|:------------------:|
 | Lines of code:   |    640948       |         489424     |
+
+
+## Proposed Strucuture
+
+The key idea is that each logical unit (folder/class) can be easily replaced.
+
+  * Environment-
+      * Perception-
+          * Real-life Perception
+          * Simulation
+          * Mapping
+  * Robot-
+      * Sensing-
+          * Sensor drivers
+      * Controls
+      * Localization
+      * Simulation
+  * Planning-  (This needs to be discussed further)
+      * Planner
+      * Waypoint_planner
+  * Utils-
+      * Utility code like teleop, launch files, scripts
