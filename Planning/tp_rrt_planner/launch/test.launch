@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-
-<launch>
-    <node pkg="tp_rrt_planner" type="tp_rrt_test" name="tp_rrt_test" output="screen" cwd="node">
-        <param name="config_file" type="str" value="$(find tp_rrt_planner)/data/eklavya4_bot_config.ini"/>
-        <param name="map_file" type="str" value="$(find tp_rrt_planner)/data/malaga-cs-fac-building.simplemap.gz"/>
-    </node>
-</launch>
