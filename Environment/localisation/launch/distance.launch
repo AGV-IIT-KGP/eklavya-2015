@@ -1,0 +1,10 @@
+<launch> 
+
+  <node pkg="robot_localization" type="distance" name="distance" output="screen">    
+       <param name="Proposed_Latitude" value="50.00" />
+       <param name="Proposed_Longitude" value="50.00" />  
+       <!--<param name="Current_Latitude" value="50.00" />
+       <param name="Current_Longitude" value="50.03" /> -->
+  </node>
+
+</launch> 
