@@ -7,11 +7,7 @@ $ sudo apt-get install tmux
 
 $ sudo apt-get install ruby
 
-$ sudo su
-
-$ gem install tmuxinator
-
-Exit from su
+$ sudo -E gem install tmuxinator
 
 The directory .tmuxinator contains the config file.
 
