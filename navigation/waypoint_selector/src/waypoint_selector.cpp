@@ -112,7 +112,9 @@ geometry_msgs::Pose2D WaypointSelector::get_Pose2D_odom(sensor_msgs::NavSatFix c
     geometry_msgs::Pose2D target_base_link;
     geometry_msgs::Pose2D target_odom;
 
-    double yaw_radian_base_link = (current_yaw_ + 90) * (PI / 180) ;
+   // std::cout << "yaw_north = " << current_yaw_north_ << std::endl;
+    //std::cout << "yaw_odom = " << current_yaw_odom_ << std::endl;
+    double yaw_radian_base_link = (current_yaw_north_ + 90 - current_yaw_odom_) * (PI / 180) ;
    // std::cout << "yaw = " << current_yaw_ << std::endl;
    // std::cout << "latitude = " << target_fix_.latitude << " longitude = " << target_fix_.longitude << std::endl;
 
@@ -121,10 +123,10 @@ geometry_msgs::Pose2D WaypointSelector::get_Pose2D_odom(sensor_msgs::NavSatFix c
 
     //std::cerr<<target_ENU_.x<<"ENU x \n";
 
-    target_base_link.x = target_ENU.x * cos(yaw_radian_base_link) + target_ENU.y * sin(yaw_radian_base_link);
-    target_base_link.y = target_ENU.y * cos(yaw_radian_base_link) - target_ENU.x * sin(yaw_radian_base_link);
+    target_odom.x = target_ENU.x * cos(yaw_radian_base_link) + target_ENU.y * sin(yaw_radian_base_link);
+    target_odom.y = target_ENU.y * cos(yaw_radian_base_link) - target_ENU.x * sin(yaw_radian_base_link);
 
-    try {
+    /*try {
         listener.waitForTransform("/odom", "/base_link", ros::Time(0), ros::Duration(10.0) );
         listener.lookupTransform("/odom", "/base_link", ros::Time(0), transform);
     } catch (tf::TransformException ex) {
@@ -133,8 +135,12 @@ geometry_msgs::Pose2D WaypointSelector::get_Pose2D_odom(sensor_msgs::NavSatFix c
 
     tf::Vector3 vector_base_link = tf::Vector3(target_base_link.x , target_base_link.y , 0.0);
     tf::Vector3 vector_odom = transform(vector_base_link);
-    target_odom.y = vector_odom.getX();
-    target_odom.x = (-1)*vector_odom.getY();
+    target_odom.x = vector_odom.getX();
+    target_odom.y = vector_odom.getY();
+    target_odom.theta = 0;*/
+
+    target_odom.x += current_ekf_position_.pose.pose.position.x;
+    target_odom.y += current_ekf_position_.pose.pose.position.y;
     target_odom.theta = 0;
     
     return target_odom;
@@ -151,22 +157,25 @@ double WaypointSelector::getMod(geometry_msgs::Point p1, geometry_msgs::Pose2D p
 }
 
 double WaypointSelector::getModgps(const sensor_msgs::NavSatFix a, const sensor_msgs::NavSatFix b) {
-    double a_utmX = 0, b_utmX = 0, a_utmY = 0, b_utmY = 0;
+    /*double a_utmX = 0, b_utmX = 0, a_utmY = 0, b_utmY = 0;
     std::string a_utmzone, b_utmzone;
-    tf::Pose a_utm_pose, b_utm_pose;
+    tf::Pose a_utm_pose, b_utm_pose;*/
 
     //gps_common::LLtoUTM(a.latitude, a.longitude, a_utmY, a_utmX, a_utmzone);
     //gps_common::LLtoUTM(b.latitude, b.longitude, b_utmY, b_utmX, b_utmzone);
-    geometry_msgs::Pose2D target_odom_a;
-    geometry_msgs::Pose2D target_odom_b;
-    target_odom_a = get_Pose2D_odom(current_gps_position_, a);
-    target_odom_b = get_Pose2D_odom(current_gps_position_, b);
+    geometry_msgs::Pose2D target_odom;
+    //geometry_msgs::Pose2D target_odom_b;
+    target_odom= get_Pose2D_odom(a, b);
+
+   // target_odom_b = get_Pose2D_odom(current_gps_position_, b);
 
 
-    std::cout << "position_a : " << target_odom_a.x << ", " << target_odom_a.y << std::endl;
-    std::cout << "position_b : " << target_odom_b.x << ", " << target_odom_b.y << std::endl;
+    //std::cout << "position of target: " << target_odom.x << ", " << target_odom.y << std::endl;
+    //std::cout << "bot position: " << current_ekf_position_.pose.pose.position.x << ", " << current_ekf_position_.pose.pose.position.y << std::endl << std::endl;
+    //std::cout << "position_b : " << target_odom_b.x << ", " << target_odom_b.y << std::endl;
 
-    return std::sqrt((target_odom_a.x - target_odom_b.x)*(target_odom_a.x - target_odom_b.x) + (target_odom_a.y - target_odom_b.y)*(target_odom_a.y -target_odom_b.y));
+    return std::sqrt((target_odom.x - current_ekf_position_.pose.pose.position.x)*(target_odom.x - current_ekf_position_.pose.pose.position.x) + (target_odom.y - current_ekf_position_.pose.pose.position.y)*(target_odom.y -current_ekf_position_.pose.pose.position.y));
+    //return std::sqrt((a_utmX - b_utmX)*(a_utmX - b_utmX)+(a_utmY - b_utmY)*(a_utmY - b_utmY));
     //a_utm_pose.setOrigin(tf::Vector3(a_utmX, a_utmY, a.latitude));
     //b_utm_pose.setOrigin(tf::Vector3(b_utmX, b_utmY, b.latitude));
 }
@@ -234,10 +243,17 @@ void WaypointSelector::set_current_ekf_position(nav_msgs::Odometry subscribed_fi
 {
     current_ekf_position_ = subscribed_fix;
     subscription_started_odom = true;
+
+    tf::Quaternion q(subscribed_fix.pose.pose.orientation.x, subscribed_fix.pose.pose.orientation.y, subscribed_fix.pose.pose.orientation.z, subscribed_fix.pose.pose.orientation.w);
+    tf::Matrix3x3 m(q);
+    double roll, pitch, yaw;
+    m.getRPY(roll, pitch, yaw);
+
+    current_yaw_odom_ = yaw*(180/M_PI);
     //odom1_publisher.publish(current_ekf_position_);
 }
 
-void WaypointSelector::set_current_yaw(sensor_msgs::Imu current_imu)
+void WaypointSelector::set_current_yaw_north(sensor_msgs::Imu current_imu)
 {
 
     tf::Quaternion q(current_imu.orientation.x, current_imu.orientation.y, current_imu.orientation.z, current_imu.orientation.w);
@@ -245,9 +261,16 @@ void WaypointSelector::set_current_yaw(sensor_msgs::Imu current_imu)
     double roll, pitch, yaw;
     m.getRPY(roll, pitch, yaw);
 
-    current_yaw_ = yaw* (180/PI);
-    
+    //current_yaw_north_ = current_yaw_north.data;
+    current_yaw_north_ = yaw*(180/M_PI);
+
 }
+
+/*void WaypointSelector::set_current_yaw_odom(std_msgs::Float64 current_yaw_odom)
+{
+    current_yaw_odom_ = current_yaw_odom.data;
+}*/
+
 
 
 std::vector<std::pair<sensor_msgs::NavSatFix, bool> >::iterator WaypointSelector::selectNearestWaypoint() {
@@ -299,6 +322,7 @@ std::vector<std::pair<sensor_msgs::NavSatFix, bool> >::iterator WaypointSelector
 
 bool WaypointSelector::reachedCurrentWaypoint(std::vector<std::pair<sensor_msgs::NavSatFix, bool> >::iterator target_ptr) {
     double error = getModgps(current_gps_position_, target_ptr->first);
+    //std::cout<< " current gps " << current_gps_position_ << "\n";
     std::cout << "Error: " << error << std::endl;
 
     if (error < proximity_ || planner_status_ == "TARGET REACHED") {
@@ -328,7 +352,8 @@ WaypointSelector::WaypointSelector(std::string file, int strategy, ros::NodeHand
 
     planner_status_subscriber = node_handle.subscribe("local_planner/status", buffer_size, &WaypointSelector::set_planner_status, this);
     fix_subscriber = node_handle.subscribe("gps/filtered", buffer_size, &WaypointSelector::set_current_gps_position, this);
-    yaw_subscriber = node_handle.subscribe("/vn_ins/imu", buffer_size, &WaypointSelector::set_current_yaw, this);
+    yaw_subscriber_north = node_handle.subscribe("/vn_ins/imu", buffer_size, &WaypointSelector::set_current_yaw_north, this);
+    //yaw_subscriber_odom = node_handle.subscribe("/robot_localization/yaw_filtered", buffer_size, &WaypointSelector::set_current_yaw_odom, this);
     odom_subscriber = node_handle.subscribe("odometry/filtered", buffer_size,  &WaypointSelector::set_current_ekf_position, this);
     next_waypoint_publisher = node_handle.advertise<geometry_msgs::PoseStamped>("waypoint_navigator/proposed_target", buffer_size);
     nml_flag_publisher = node_handle.advertise<std_msgs::Bool>("waypoint_selector/nml_flag", buffer_size);
