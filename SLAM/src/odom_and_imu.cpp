@@ -119,6 +119,7 @@ void OdometryImuCombiner::publishUsing(ros::Publisher& publisher,ros::Publisher&
     publisher.publish(odom);
     std_msgs::Float64 theta;
     theta.data=fmod(th,360.0);
+    theta.data *= (180)/PI;
     yaw_pub.publish(theta);
     ROS_INFO("the %f ", odom.pose.pose.position.x);
 }
@@ -132,7 +133,7 @@ int main(int argc, char** argv){
     //ros::Subscriber odom_sub = n.subscribe<nav_msgs::Odometry>("odom", 50, &OdometryImuCombiner::odomCallback, &combiner);
     ros::Subscriber imu_sub = n.subscribe<sensor_msgs::Imu>("vn_ins/imu", 50, &OdometryImuCombiner::imuCallback, &combiner);
     ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom1", 50);
-    ros::Publisher yaw_pub = n.advertise<std_msgs::Float64>("vn_ins/yaw",50);
+    ros::Publisher yaw_pub = n.advertise<std_msgs::Float64>("robot_localiztion/yaw_filtered",50);
 
     ros::Rate rate(40);
 
