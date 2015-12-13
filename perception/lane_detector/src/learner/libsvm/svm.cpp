@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <iostream>
 #include <float.h>
 #include <string.h>
 #include <stdarg.h>
@@ -503,6 +504,8 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
                    double *alpha_, double Cp, double Cn, double eps,
                    SolutionInfo* si, int shrinking) {
     this->l = l;
+    //std::cout<<"l:"<<l<<std::endl;
+    //std::cout<<"Cp:"<<Cp<<" Cn:"<<Cn<<" eps:"<<eps<<std::endl;
     this->Q = &Q;
     QD = Q.get_QD();
     clone(p, p_, l);
@@ -1310,9 +1313,10 @@ private:
 static void solve_c_svc(
                         const svm_problem *prob, const svm_parameter* param,
                         double *alpha, Solver::SolutionInfo* si, double Cp, double Cn) {
-    int l = prob->l;
+    int l = prob->l; //This is the total number of kernels selected and stored in the file
     double *minus_ones = new double[l];
     schar *y = new schar[l];
+    //std::cout<<"l:"<<l<<std::endl;
 
     int i;
 
@@ -1322,7 +1326,6 @@ static void solve_c_svc(
         if (prob->y[i] > 0) y[i] = +1;
         else y[i] = -1;
     }
-
     Solver s;
     s.Solve(l, SVC_Q(*prob, *param, y), minus_ones, y,
             alpha, Cp, Cn, param->eps, si, param->shrinking);

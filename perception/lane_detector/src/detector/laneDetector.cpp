@@ -47,7 +47,10 @@ void LaneDetector::interpret() {
 
 
     result=shadowRemoval(result);
-    cv::imshow("shadowRemoved",result);
+    if (debug_mode > 0) {
+      cv::imshow("shadowRemoved",result);
+      cv::waitKey(wait_time);
+    }
     result = inversePerspectiveTransform(result);
     if (time_functions == 2) {
         gettimeofday(&tval_after, NULL);
@@ -85,7 +88,7 @@ void LaneDetector::interpret() {
     if (time_functions > 0) {
         gettimeofday(&tval_before, NULL);
     }
-    result = obstacleRemoval(result);
+    /*result = obstacleRemoval(result);
     if (time_functions > 0) {
         gettimeofday(&tval_after, NULL);
         time_elapsed = tval_after.tv_sec + (tval_after.tv_usec / 1000000.0) - (tval_before.tv_sec + (tval_before.tv_usec / 1000000.0));
@@ -97,7 +100,7 @@ void LaneDetector::interpret() {
     if (debug_mode > 0) {
         cv::imshow(obstacle_removal_output_window, result);
         cv::waitKey(wait_time);
-    }
+    }*/
 
     if (time_functions > 0) {
         gettimeofday(&tval_before, NULL);
@@ -111,8 +114,10 @@ void LaneDetector::interpret() {
             std::cout << "GetLaneBinary FPS : " << 1. / time_elapsed << std::endl;
         }
     }
+    cv::Mat result2(200,200,CV_8UC1);
+    cv::resize(result, result2, result2.size(), 0,0,CV_INTER_LINEAR );
 
-    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud=generatecloud(result);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud=generatecloud(result2);
     cloud_pub.publish(cloud);
 
     if (debug_mode > 0) {
@@ -127,7 +132,9 @@ void LaneDetector::interpret() {
             ROS_INFO("Total FPS : %lf", 1. / total_time_elapsed);
         }
     }
-    publishLanes(result);
+    //cv::waitKey(0);
+    cv::imshow(lane_binary_output, result);
+    publishLanes(result2);
 }
 
 void LaneDetector::setupComms() {

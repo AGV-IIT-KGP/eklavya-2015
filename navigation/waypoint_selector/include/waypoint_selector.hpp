@@ -19,8 +19,12 @@
 #include <tf/transform_datatypes.h>
 #include <tf/transform_listener.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
-
+#include <std_msgs/Float64.h>
 #include <gps_common/conversions.h>
+#include <sensor_msgs/Imu.h>
+
+
+#define PI 3.14159265
 
 
 //All distance units are in meter. Conversion has been taken care of before publishing.
@@ -45,6 +49,9 @@ class WaypointSelector {
     std::string utmZone_;
     double magnetic_declination_;//TODO: make this a rosparam
 
+    double current_yaw_north_;
+    double current_yaw_odom_;
+
     std::ifstream waypoints_;
     sensor_msgs::NavSatFix current_gps_position_;
     nav_msgs::Odometry current_odom_position_;
@@ -57,8 +64,11 @@ class WaypointSelector {
     ros::Subscriber planner_status_subscriber;
     ros::Subscriber fix_subscriber;
     ros::Subscriber odom_subscriber;
+    ros::Subscriber yaw_subscriber_north;
+   // ros::Subscriber yaw_subscriber_odom;
+
     //ros::Publisher odom1_publisher;
-    
+
     tf::TransformListener listener;
 
 public:
@@ -68,11 +78,14 @@ public:
 
     bool readWaypoints(std::ifstream& waypoints, std::vector<std::pair<sensor_msgs::NavSatFix, bool> >& gps_waypoints, int& num_of_waypoints, std::string filename);
     geometry_msgs::Pose2D interpret(sensor_msgs::NavSatFix current, sensor_msgs::NavSatFix target);
+    geometry_msgs::Pose2D get_Pose2D_odom(sensor_msgs::NavSatFix current, sensor_msgs::NavSatFix target);
     geometry_msgs::Pose2D getPose2DfromGPS(sensor_msgs::NavSatFix target);
     double getMod(geometry_msgs::Point p1, geometry_msgs::Pose2D p2);
     double getModgps(sensor_msgs::NavSatFix a, sensor_msgs::NavSatFix b);
     void set_current_gps_position(const sensor_msgs::NavSatFixConstPtr& msg);
     void set_current_ekf_position(nav_msgs::Odometry subscriber_ekf);
+    void set_current_yaw_north(sensor_msgs::Imu current_imu);
+    //void set_current_yaw_odom(std_msgs::Float64 current_yaw_odom);
     std::vector<std::pair<sensor_msgs::NavSatFix, bool> >::iterator selectNearestWaypoint();
     std::vector<std::pair<sensor_msgs::NavSatFix, bool> >::iterator selectNextWaypointInSequence();
     bool reachedCurrentWaypoint(std::vector<std::pair<sensor_msgs::NavSatFix, bool> >::iterator target_ptr);
