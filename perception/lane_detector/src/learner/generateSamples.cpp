@@ -41,7 +41,7 @@ void callbackFunc(int event, int x, int y, int flags, void* userdata) {
             for (int j = 0; j < size_sample; j++) {
                 commonFile << countP++ << ":" << (int) imgRoi.at<cv::Vec3b>(i, j)[0] << " ";
                 commonFile << countP++ << ":" << (int) imgRoi.at<cv::Vec3b>(i, j)[1] << " ";
-   //             commonFile << countP++ << ":" << (int) imgRoi.at<cv::Vec3b>(i, j)[2] << " ";
+                commonFile << countP++ << ":" << (int) imgRoi.at<cv::Vec3b>(i, j)[2] << " ";
             }
         }
 
@@ -57,7 +57,7 @@ void callbackFunc(int event, int x, int y, int flags, void* userdata) {
             for (int j = 0; j < size_sample; j++) {
                 commonFile << countN++ << ":" << (int) imgRoi.at<cv::Vec3b>(i, j)[0] << " ";
                 commonFile << countN++ << ":" << (int) imgRoi.at<cv::Vec3b>(i, j)[1] << " ";
- //               commonFile << countN++ << ":" << (int) imgRoi.at<cv::Vec3b>(i, j)[2] << " ";
+                commonFile << countN++ << ":" << (int) imgRoi.at<cv::Vec3b>(i, j)[2] << " ";
             }
         }
 
@@ -91,7 +91,6 @@ int main(int argc, char** argv) {
         }
     }
     printf("Sample Size: %d\n", size_sample);
-
     temp = img.clone();
     cvtColor(temp,temp,CV_BGR2HSV);
     cvtColor(img,img,CV_BGR2HSV);
