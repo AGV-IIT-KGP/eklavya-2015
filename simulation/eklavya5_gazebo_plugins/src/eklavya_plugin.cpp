@@ -1,44 +1,8 @@
-/*
- * Copyright (c) 2012, Clearpath Robotics, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of Clearpath Robotics, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived from
- *       this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
-
-/*
- * Desc: Gazebo 1.x plugin for Eklavya 2015
- * Adapted from the Husky plugin
- * Author: Jit Ray Chowdhury
- */ 
-
 #include <boost/thread.hpp>
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/JointState.h>
 #include <geometry_msgs/Twist.h>
 #include <math.h>
-
 #include <eklavya_plugin/eklavya_plugin.h>
 
 #include <ros/time.h>
@@ -48,6 +12,7 @@ using namespace gazebo;
 enum {BL= 0, BR=1, F=2};
 
 double steer_angle = 0.0;
+double va=0.0;
 
 EklavyaPlugin::EklavyaPlugin()
 {
@@ -118,7 +83,7 @@ void EklavyaPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf )
   if (_sdf->HasElement("wheelDiameter"))
     wheel_diam_ = _sdf->GetElement("wheelDiameter")->Get<double>();
 
-  torque_ = 15.0;
+  torque_ = 10000.0;
   if (_sdf->HasElement("torque"))
     torque_ = _sdf->GetElement("torque")->Get<double>();
 
@@ -149,7 +114,7 @@ void EklavyaPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf )
 
   cmd_vel_sub_ = rosnode_->subscribe("cmd_vel", 1, &EklavyaPlugin::OnCmdVel, this );
 
-  odom_pub_ = rosnode_->advertise<nav_msgs::Odometry>("odom", 1);
+  odom_pub_ = rosnode_->advertise<nav_msgs::Odometry>("odometry/filtered", 1);
 
   joint_state_pub_ = rosnode_->advertise<sensor_msgs::JointState>("joint_states", 1);
 
@@ -217,7 +182,7 @@ void EklavyaPlugin::publishOdometry(common::Time time_now) {
   odom.header.stamp.sec = time_now.sec;
   odom.header.stamp.nsec = time_now.nsec;
   odom.header.frame_id = "odom";
-  odom.child_frame_id = "base_footprint";
+  odom.child_frame_id = "base_link";
   odom.pose.pose.position.x = odom_pose_[0];
   odom.pose.pose.position.y = odom_pose_[1];
   odom.pose.pose.position.z = 0;
@@ -267,7 +232,7 @@ void EklavyaPlugin::UpdateChild()
   d_bl = d_br = d_f = 0;
   dr = da = 0;
 
-  // Distance travelled by front wheels
+  // Distance travelled by back wheels
   if (set_joints_[BL])
     d_bl = step_time.Double() * (wd / 2) * joints_[BL]->GetVelocity(0);
   if (set_joints_[BR])
@@ -298,13 +263,13 @@ void EklavyaPlugin::UpdateChild()
   }
   */
   
-  dr = (d_bl + d_br + d_f) / 3;
+  dr = (d_bl + d_br)/2.0; //+ d_f) / 3;
   da = ((d_br)/2 - (d_bl)/2) / ws; // ??
 
   
   odom_pub_counter_++;
-  odom_dr_ += dr;
-  odom_da_ += da;
+  odom_dr_ += (-dr);
+  odom_da_ += (-da);
   double reqd_period = 0.04;
   if (odom_pub_counter_ >= reqd_period/step_time.Double()) {
      publishOdometry(time_now);
@@ -314,24 +279,26 @@ void EklavyaPlugin::UpdateChild()
   }
 
 
-
+/*
   if (set_joints_[BL])
   {
-    joints_[BL]->SetVelocity( 0, wheel_speed_[BL] / (wd/2.0) );
+    joints_[BL]->SetVelocity( 0, -wheel_speed_[BL]/ (wd/2.0) );
     joints_[BL]->SetMaxForce( 0, torque_ );
   }
   if (set_joints_[BR])
   {
-    joints_[BR]->SetVelocity( 0, wheel_speed_[BR] / (wd / 2.0) );
+    joints_[BR]->SetVelocity( 0, -wheel_speed_[BR]/ (wd / 2.0) );
     joints_[BR]->SetMaxForce( 0, torque_ );
   }
+  */
   if (set_joints_[F])
   {
   
     // ??
-    this->model_->SetJointPosition("Chassis-Steering", steer_angle);//joints_[3]->SetJointPosition("Chassis-Steering", steer_angle);
+    this->j2_controller = new physics::JointController(model_);
+    j2_controller->SetJointPosition("Chassis-Steering",steer_angle);//joints_[3]->SetJointPosition("Chassis-Steering", steer_angle);
 
-    joints_[F]->SetVelocity( 0, wheel_speed_[F] / (0.44 / 2.0) ); //front wheel has different diameter
+    joints_[F]->SetVelocity( 0, -wheel_speed_[F]/ (wd/2.0) ); //front wheel has different diameter
     joints_[F]->SetMaxForce( 0, torque_ );
     
   }
@@ -390,7 +357,7 @@ void EklavyaPlugin::UpdateChild()
 void EklavyaPlugin::OnCmdVel( const geometry_msgs::TwistConstPtr &msg)
 {
   last_cmd_vel_time_ = this->world_->GetSimTime();
-  double vr, va, d_frwheel_axle;
+  double vr, d_frwheel_axle;
   vr = msg->linear.x;
   va = msg->angular.z;
 
@@ -398,7 +365,7 @@ void EklavyaPlugin::OnCmdVel( const geometry_msgs::TwistConstPtr &msg)
 
   wheel_speed_[BL] = vr - va * (wheel_sep_) / 2;
   wheel_speed_[BR] = vr + va * (wheel_sep_) / 2;
-  steer_angle = atan(va*d_frwheel_axle/vr);
+  steer_angle = atan(va*d_frwheel_axle/vr)/cos(0.34906585);
   wheel_speed_[F] = vr/cos(steer_angle); //vr - va * (wheel_sep_) / 2;
   //wheel_speed_[FR] = vr + va * (wheel_sep_) / 2;
 }

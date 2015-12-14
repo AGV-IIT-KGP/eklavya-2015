@@ -8,6 +8,7 @@
 #include "gazebo/common/Time.hh"
 #include "gazebo/common/Plugin.hh"
 #include "gazebo/common/Events.hh"
+#include "gazebo/physics/Joint.hh"
 
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/TwistWithCovariance.h>
@@ -15,13 +16,6 @@
 
 #include <tf/transform_broadcaster.h>
 #include <ros/ros.h>
-
-
-/*
- * Desc: Gazebo 1.x plugin for Eklavya 2015
- * Adapted from the Husky plugin
- * Author: Jit Ray Chowdhury
- */ 
 
 namespace gazebo
 {
@@ -88,7 +82,7 @@ namespace gazebo
       bool set_joints_[4];
       physics::JointPtr joints_[4];
       physics::CollisionPtr base_geom_;
-
+      
       tf::TransformBroadcaster transform_broadcaster_;
       sensor_msgs::JointState js_;
 
@@ -99,6 +93,8 @@ namespace gazebo
       event::ConnectionPtr updateConnection;
 
       bool kill_sim;
+
+      physics::JointController *j2_controller;
   };
 }
 #endif
