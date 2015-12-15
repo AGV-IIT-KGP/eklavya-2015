@@ -105,7 +105,7 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
             break;
     }
     bottom.x/=20;
-    bottom.y/=200;
+    bottom.y/=20;
     bottom.y-=img.rows;
 
     for (int i = 0; i < lines.size(); i++) {
@@ -273,16 +273,18 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
     }*/
     double valx=target_pose.x;
     double valy=target_pose.y;
+    double di=1;
     int valtheta=target_pose.theta;
     for(int i=0;i<counter;i++)
     {
-        valx+=(i+1)*(temp[i]).x;
-        valy+=(i+1)*(temp[i]).y;
-        valtheta+=(i+1)*(temp[i]).theta;
+        valx+=(i+2)*(temp[i]).x;
+        valy+=(i+2)*(temp[i]).y;
+        valtheta+=(i+2)*(temp[i]).theta;
+        di+=i+2;
     }
-    target_pose.x=int(valx/6);
-    target_pose.y=int(valy/6);
-    target_pose.theta=int(valtheta/6);
+    target_pose.x=int(valx/di);
+    target_pose.y=int(valy/di);
+    target_pose.theta=int(valtheta/di);
 
     target.x=target_pose.x;
     target.y=origin.y - target_pose.y;
