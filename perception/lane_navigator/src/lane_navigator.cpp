@@ -280,9 +280,9 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
         valy+=(i+1)*(temp[i]).y;
         valtheta+=(i+1)*(temp[i]).theta;
     }
-    target_pose.x=int(valx/7);
-    target_pose.y=int(valy/7);
-    target_pose.theta=int(valtheta/7);
+    target_pose.x=int(valx/6);
+    target_pose.y=int(valy/6);
+    target_pose.theta=int(valtheta/6);
 
     target.x=target_pose.x;
     target.y=origin.y - target_pose.y;
@@ -296,6 +296,7 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
         std::cout << "target.x: " << target.x << " target.y: " << target.y << std::endl;
         std::cout << "proj.x: " << proj.x << " " << "proj.y: " << proj.y << std::endl;
         //cv::line(mdst, proj, target, cv::Scalar(150),2,8);
+        ROS_INFO("%d, %d", target.x,target.y);
         cv::line(mdst, cv::Point(bot_x, bot_y), target, cv::Scalar(255), 2, 8);
         cv::namedWindow("Center_path", cv::WINDOW_NORMAL);
         cv::imshow("Center_path", mdst);
@@ -325,6 +326,15 @@ void publishTarget(const sensor_msgs::ImageConstPtr msg ) {
         temp[i]=temp1;
         temp1=temp2;
     }
+    if(debug==5)
+    {
+        msge.x=500;
+        msge.y=250;
+        msge.theta=0;
+    }
+    double temp11=msge.x/100;
+    msge.x=msge.y/100;
+    msge.y=5 -temp11;
     new_msg = convert_Pose2D_to_PoseStamped(msge);
     pub_point.publish(new_msg);
     if(debug)

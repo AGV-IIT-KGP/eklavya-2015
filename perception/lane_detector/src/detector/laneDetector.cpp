@@ -114,10 +114,10 @@ void LaneDetector::interpret() {
             std::cout << "GetLaneBinary FPS : " << 1. / time_elapsed << std::endl;
         }
     }
-    cv::Mat result2(200,200,CV_8UC1);
-    cv::resize(result, result2, result2.size(), 0,0,CV_INTER_LINEAR );
+    //cv::Mat result2(200,200,CV_8UC1);
+    //cv::resize(result, result2, result2.size(), 0,0,CV_INTER_LINEAR );
 
-    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud=generatecloud(result2);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud=generatecloud(result);
     cloud_pub.publish(cloud);
 
     if (debug_mode > 0) {
@@ -134,7 +134,7 @@ void LaneDetector::interpret() {
     }
     //cv::waitKey(0);
     cv::imshow(lane_binary_output, result);
-    publishLanes(result2);
+    publishLanes(result);
 }
 
 void LaneDetector::setupComms() {
