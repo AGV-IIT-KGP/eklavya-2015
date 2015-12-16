@@ -1,3 +1,4 @@
+
 FILE(MAKE_DIRECTORY "/home/partha/agv/agv_ws1/devel/share/high_level_planner_igvc/graphs" )
 FILE(GLOB_RECURSE FOR_DEL /home/partha/agv/agv_ws1/devel/share/high_level_planner_igvc/graphs/* )
 #message("delete files from /home/partha/agv/agv_ws1/devel/share/high_level_planner_igvc/graphs/ : ${FOR_DEL}")
@@ -10,18 +11,22 @@ message("   -- Created XML files:")
 foreach( f ${CREATED_FILES})
      message("      -- ${f} ")
 endforeach()
+
 FILE(GLOB_RECURSE CREATED_FILES_ABS /home/partha/agv/agv_ws1/devel/share/high_level_planner_igvc/graphs/*.scxml /home/partha/agv/agv_ws1/devel/share/high_level_planner_igvc/graphs/*.btxml /home/partha/agv/agv_ws1/devel/share/high_level_planner_igvc/graphs/*.taoxml)
 execute_process(COMMAND "python" /home/partha/agv/agv_ws1/devel/lib/decision_making_parser/decision_making_xml_parser.py -i "/home/partha/agv/agv_ws1/src/eklavya-2015/navigation/high_level_planner_igvc" "/home/partha/agv/agv_ws1/devel/share/high_level_planner_igvc/graphs" "${CREATED_FILES_ABS}" RESULT_VARIABLE rv)
 FILE(GLOB_RECURSE CREATED_FILES RELATIVE /home/partha/agv/agv_ws1/devel/share/high_level_planner_igvc/graphs/ /home/partha/agv/agv_ws1/devel/share/high_level_planner_igvc/graphs/*.dot /home/partha/agv/agv_ws1/devel/share/high_level_planner_igvc/graphs/*.xot)
+
 message("   -- Created DOT files:")
 foreach( f ${CREATED_FILES})
      message("      -- ${f} ")
 endforeach()
+
 FILE(GLOB_RECURSE CREATED_FILES_ABS /home/partha/agv/agv_ws1/devel/share/high_level_planner_igvc/graphs/*.dot)
 foreach( f ${CREATED_FILES_ABS} )
 	execute_process(COMMAND "dot" -q1 -Tgif -o${f}.gif  ${f} RESULT_VARIABLE rv)
 endforeach()
 FILE(GLOB_RECURSE CREATED_FILES RELATIVE /home/partha/agv/agv_ws1/devel/share/high_level_planner_igvc/graphs/ /home/partha/agv/agv_ws1/devel/share/high_level_planner_igvc/graphs/*.gif)
+
 message("   -- Created GIF files:")
 foreach( f ${CREATED_FILES})
      message("      -- ${f} ")

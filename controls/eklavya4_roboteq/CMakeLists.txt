@@ -6,6 +6,7 @@ project(eklavya4_roboteq)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  rospy
   std_msgs
   message_generation
 )
@@ -31,7 +32,7 @@ add_definitions(-std=c++0x)
 catkin_package(
   #INCLUDE_DIRS include
   #LIBRARIES eklavya4_roboteq
-  CATKIN_DEPENDS roscpp std_msgs
+  CATKIN_DEPENDS roscpp std_msgs message_runtime
   #DEPENDS system_lib
 )
 
@@ -50,13 +51,14 @@ include_directories(
 
 ## Declare a cpp executable
  add_executable(roboteq_server src/roboteq_server.cpp src/RoboteqDevice.cpp)
+ target_link_libraries(roboteq_server ${catkin_LIBRARIES})
+add_dependencies(roboteq_server eklavya4_roboteq_gencpp)
+
  add_executable(roboteq_client src/command_subscriber_roboteq_client.cpp)
 
-
-## Specify libraries to link a library or executable target against
- target_link_libraries(roboteq_server
-   ${catkin_LIBRARIES}
- )
  target_link_libraries(roboteq_client
    ${catkin_LIBRARIES}
  )
+add_dependencies(roboteq_client eklavya4_roboteq_gencpp)
+
+## Specify libraries to link a library or executable target against

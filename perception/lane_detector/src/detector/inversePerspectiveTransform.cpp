@@ -29,6 +29,7 @@ void loadVariable() {
     status = status && fscanf(readFile, "w = %d\n", &w);
     status = status && fscanf(readFile, "h = %d\n", &h);
     printf("%d %d %d %d %d\n", bot_x, bot_y, d, w, h);
+    return;
     if (status == 0) {
         printf("load in reading bot variable file\n");
     }
@@ -47,11 +48,9 @@ cv::Mat transformImage(cv::Mat &image) {
     dst_vertices[1] = cv::Point(bot_x + w / 2, 900 - d - h);
     dst_vertices[2] = cv::Point(bot_x - w / 2, 900 - d);
     dst_vertices[3] = cv::Point(bot_x + w / 2, 900 - d);
-
     cv::Mat wrap_perspective_transform = cv::getPerspectiveTransform(src_vertices, dst_vertices);
     cv::Mat result;
     cv::warpPerspective(image, result, wrap_perspective_transform, cv::Size(1000, 1000), cv::INTER_NEAREST, cv::BORDER_CONSTANT);
-
     return result;
 }
 
@@ -70,7 +69,7 @@ void callbackFunc(int event, int x, int y, int flags, void* userdata) {
 }
 
 cv::Mat LaneDetector::inversePerspectiveTransform(cv::Mat &image) {
-    my_ipt_offsets_file =ros::package::getPath("lane_detector")+"/data/"+  ipt_offsets_file;
+    my_ipt_offsets_file =ros::package::getPath("lane_detector")+"/data/"+  ipt_offsets_file.c_str();
 
     static bool done = false;
     static bool read_parameters = false;
@@ -123,7 +122,6 @@ cv::Mat LaneDetector::inversePerspectiveTransform(cv::Mat &image) {
                 printf(warp_matrix_file.c_str());
             }
         }
-
         cv::Mat result = transformImage(image);
         return result;
     }
