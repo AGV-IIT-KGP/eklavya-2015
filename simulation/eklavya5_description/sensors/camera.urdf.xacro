@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<robot name="sensor_camera" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!--<xacro:include filename="$(find eklavya5_description)/sensors/camerasensor_gazebo.urdf.xacro"/>-->
+ 
+  <xacro:macro name="sensor_camera" params="parent child name colour camera_px camera_py camera_pz camera_or camera_op camera_oy axis_x axis_y axis_z">
+    <link name="${name}_link">
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+      <box size="0.05 0.05 0.05"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.05 0.05 0.05"/>
+        </geometry>
+        <material name="red"/>
+      </visual>
+
+      <inertial>
+        <mass value="1e-5" />
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+      </inertial> 
+    </link>
+    <joint name="${name}_joint" type="fixed">
+      <axis xyz="${axis_x} ${axis_y} ${axis_z}" />
+      <origin xyz="${camera_px} ${camera_py} ${camera_pz}" rpy="${camera_or} ${camera_op} ${camera_oy}"/>
+      <parent link="${parent}"/>
+      <child link="${child}"/>
+    </joint>
+
+    <!-- Camera sensor for simulation -->
+    <!--<xacro:eklavya_sim_camerasensor name="${name}" />
+    </xacro:macro>-->
+    <gazebo reference="camera_link">
+      <sensor type="camera" name="camera1">
+        <update_rate>24.0</update_rate>
+        <camera name="head">
+          <horizontal_fov>1.23</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <!-- Noise is sampled independently per pixel on each frame.
+                 That pixel's noise value is added to each of its color
+                 channels, which at that point lie in the range [0,1]. -->
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+        <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>0.0</updateRate>
+          <cameraName>eklavya</cameraName>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>camera_link</frameName>
+          <hackBaseline>0.07</hackBaseline>
+          <distortionK1>0.0</distortionK1>
+          <distortionK2>0.0</distortionK2>
+          <distortionK3>0.0</distortionK3>
+          <distortionT1>0.0</distortionT1>
+          <distortionT2>0.0</distortionT2>
+        </plugin>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+</robot>

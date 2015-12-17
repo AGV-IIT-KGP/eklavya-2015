@@ -1,25 +1,25 @@
-Installing Gazebo 4
-===================
-Execute out the following commands on the terminal  
-```bash
-codename=`lsb_release -sc`
-sudo sh -c "echo \"deb http://packages.osrfoundation.org/gazebo/ubuntu ${codename} main\" > /etc/apt/sources.list.d/gazebo-latest.list"
-wget  http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
-sudo apt-get update
-sudo apt-get remove ros-${ROS_DISTRO}-simulators libsdformat1
+# agv_simulation
 
-sudo apt-get install gazebo4 ros-${ROS_DISTRO}-gazebo4-ros-pkgs ros-${ROS_DISTRO}-gazebo4-ros-control
+Simulator for new bot.
 
-sudo apt-get install ros-${ROS_DISTRO}-desktop ros-${ROS_DISTRO}-perception
-```
+Sensors added and the topics they publish to:
+*	Camera : /eklavya/image_raw
+*	Lidar  : /eklavya/laser/scan
+*	IMU   :  /eklavya/imu
+*	GPS   : /eklavya/gps/fix
 
-The following packages can also be installed if needed  
-```bash
-sudo apt-get install ros-${ROS_DISTRO}-controller-manager ros-${ROS_DISTRO}-ackermann-msgs ros-${ROS_DISTRO}-effort-controllers ros-${ROS_DISTRO}-joint-state-controller ros-${ROS_DISTRO}-map-server ros-${ROS_DISTRO}-robot-pose-ekf
-```
 
-add the following line to ~/.bashrc if not already there  
-```bash
-source /usr/share/gazebo/setup.sh
-```
+Files where respective sensor topics are defined:
+*	Camera : eklavya5_description/robot/chasisss.urdf.xacro
+*	Lidar: eklavya5_description/robot/chasisss.urdf.xacro
+*	IMU : eklavya5_description/sensors/imusensor_gazebo.urdf.xacro
+*	GPS : eklavya5_description/sensors/hector_gps_gazebo.urdf.xacro
+
+
+Note: Plugin for GPS is a custom plugin, hence the package "eklavya5_gazebo_plugins" has to be built for the GPS to work.
+
+
+The simulator is launch by:
+
+roslaunch eklavya5_gazebo eklavya_igvc_final.launch
 

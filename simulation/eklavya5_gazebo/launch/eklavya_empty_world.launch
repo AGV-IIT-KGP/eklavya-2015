@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="ns" value="/" />
+  <arg name="use_sim_time" value="true"/>
+  <!--<remap from="/eklavya5/cmd_vel" to="/cmd_vel" />-->
+  
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+              
+  </include>
+  
+  <!--<include file="$(find eklavya5_gazebo)/launch/base.urdf.gazebo.launch">
+    <arg name="gps_enabled" value="true"/>
+    <arg name="imu_enabled" value="true"/>
+    <arg name="front_laser" value="true"/>
+  </include>-->
+  
+</launch>
