@@ -211,6 +211,8 @@ namespace RobotLocalization
        * IMU data (the subscriber gets shut down once we compute
        * the transform), so we can assumed that every IMU message
        * that comes here is meant to be used for that purpose. */
+
+      
       tf2::fromMsg(msg->orientation, transformOrientation_);
 
       // Correct for the IMU's orientation w.r.t. base_link
@@ -223,6 +225,7 @@ namespace RobotLocalization
 
       if (canTransform)
       {
+        ROS_INFO("CAN TRANSFORM");
         double rollOffset = 0;
         double pitchOffset = 0;
         double yawOffset = 0;
@@ -396,6 +399,7 @@ namespace RobotLocalization
 
       gpsOdom.header.frame_id = worldFrameId_;
       gpsOdom.header.stamp = gpsUpdateTime_;
+      gpsOdom.child_frame_id="base_link";
 
       // Mark this GPS as used
       gpsUpdated_ = false;

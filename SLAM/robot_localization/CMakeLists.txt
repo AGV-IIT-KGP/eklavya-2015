@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   roslint
   sensor_msgs
   std_msgs
+  tf
   tf2
   tf2_geometry_msgs
   tf2_ros)
@@ -45,9 +46,11 @@ generate_messages(
   geographic_msgs
   geometry_msgs
   std_msgs
+  sensor_msgs
 )
 
 catkin_package(
+
   INCLUDE_DIRS
     include
   LIBRARIES 
@@ -99,6 +102,12 @@ add_dependencies(navsat_transform robot_localization_gencpp)
 add_executable(ekf_localization_node src/ekf_localization_node.cpp)
 add_executable(ukf_localization_node src/ukf_localization_node.cpp)
 add_executable(navsat_transform_node src/navsat_transform_node.cpp)
+add_executable(odometry_publisher src/encoder.cpp)
+add_executable(odom_corr src/odom.cpp)
+add_executable(imu_node src/imu_covariance.cpp)
+add_executable(gps src/gps.cpp)
+add_executable(odom_imu src/odom_and_imu.cpp)
+add_executable(odom_gps src/odometry_gps.cpp)
 
 # Linking
 target_link_libraries(ros_filter_utilities ${catkin_LIBRARIES} ${EIGEN3_LIBRARIES})
@@ -111,6 +120,12 @@ target_link_libraries(ekf_localization_node ros_filter ${catkin_LIBRARIES})
 target_link_libraries(ukf_localization_node ros_filter ${catkin_LIBRARIES})
 target_link_libraries(navsat_transform filter_utilities ros_filter_utilities ${catkin_LIBRARIES} ${EIGEN3_LIBRARIES})
 target_link_libraries(navsat_transform_node navsat_transform ${catkin_LIBRARIES})
+target_link_libraries(odometry_publisher ${catkin_LIBRARIES})
+target_link_libraries(odom_corr ${catkin_LIBRARIES})
+target_link_libraries(imu_node ${catkin_LIBRARIES})
+target_link_libraries(gps ${catkin_LIBRARIES})
+target_link_libraries(odom_imu ${catkin_LIBRARIES})
+target_link_libraries(odom_gps ${catkin_LIBRARIES})
 
 #############
 ## Install ##
