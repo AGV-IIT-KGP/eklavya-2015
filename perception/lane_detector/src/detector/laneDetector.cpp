@@ -64,6 +64,7 @@ void LaneDetector::interpret() {
         cv::imshow(ipt_output_window, result);
         cv::waitKey(wait_time);
     }
+    cv::imshow("ipt_output_window", result);
     cvtColor(result,result,CV_BGR2HSV);
 
     result = grassRemoval(result);
@@ -133,7 +134,7 @@ void LaneDetector::interpret() {
         }
     }
     //cv::waitKey(0);
-    cv::imshow(lane_binary_output, result);
+    cv::imshow("lane_binary_output", result);
     publishLanes(result);
 }
 

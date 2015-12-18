@@ -51,7 +51,7 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
     center_point.x = 0, center_point.y = 0;
     double center_angle = 0.0;
     cdst = img;
-    cv::Canny(img, cdst, 25, 75, 3);
+    //cv::Canny(img, cdst, 25, 75, 3);
     cv::HoughLinesP(cdst, lines, 1, CV_PI / 180, 25, 15, 5);
     int image_halfy=0;
     cv::Point top(0,0), bottom(0,0);
@@ -222,6 +222,7 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
                 rightCount++;
             }
         }
+        //std::cerr<<"left:"<<leftCount<<" right:"<<rightCount<<std::endl;
         if(leftCount!=0 && rightCount!=0){
             leftCenter.x /= leftCount; //Load when count==0
             leftCenter.y /= leftCount;
@@ -232,13 +233,17 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
 
             rightSlope /= rightCount;
             if ((center_point.x - leftCenter.x) < 50 || (leftCenter.x - center_point.x) < 50) {
-                center_point.x += 150; //Target must not lie on the lane
-                target.x = 150;
+                center_point.x += 200; //Target must not lie on the lane
+                target.x += 200;
             }
             if ((rightCenter.x - center_point.x) < 50 || (center_point.x - rightCenter.x) < 50) {
-                center_point.x = center_point.x - 150;
-                target.x -= 150;
+                center_point.x = center_point.x - 200;
+                target.x -= 200;
             }
+        }
+        else
+        {
+
         }
 
         proj.x = (bot_x + m * (bot_y - center_point.y) + m * m * center_point.x) / (1 + m * m); // Verified
@@ -300,7 +305,7 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
         //cv::line(mdst, proj, target, cv::Scalar(150),2,8);
         ROS_INFO("%d, %d", target.x,target.y);
         cv::line(mdst, cv::Point(bot_x, bot_y), target, cv::Scalar(255), 2, 8);
-        cv::namedWindow("Center_path", cv::WINDOW_NORMAL);
+        cv::namedWindow("Center_path", cv::WINDOW_AUTOSIZE);
         cv::imshow("Center_path", mdst);
         // cv::waitKey(0);
     }
