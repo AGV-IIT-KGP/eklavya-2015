@@ -4,9 +4,9 @@
 #include <math.h>
 
 #define ANGLE_SPREAD 180
-#define BOT_REFERENCE_X 500
-#define BOT_REFERENCE_Y 100   //100 pixels with respect to cartesian coordinates 
-#define LARGE_VAL 10000     
+#define BOT_REFERENCE_X 100
+#define BOT_REFERENCE_Y 20   //100 pixels with respect to cartesian coordinates
+#define LARGE_VAL 10000
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr LaneDetector::generatecloud(cv::Mat& img)
 {
@@ -19,11 +19,10 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr LaneDetector::generatecloud(cv::Mat& img)
 		for(int j=0;j<img.cols;j++)
 		{
 			if(img.at<uchar>(img.rows-i,j)>200)
-			cloud_msg->points.push_back(pcl::PointXYZ((j-BOT_REFERENCE_X)*0.001,((i-img.rows)+8.2*BOT_REFERENCE_Y)*0.001,0));
+			cloud_msg->points.push_back(pcl::PointXYZ(((i-img.rows)+6*BOT_REFERENCE_Y)*0.001,(BOT_REFERENCE_X-j)*0.001,0));
 		}
 	}
 	cloud_msg->width=cloud_msg->points.size();
 
 	return cloud_msg;
 }
-
