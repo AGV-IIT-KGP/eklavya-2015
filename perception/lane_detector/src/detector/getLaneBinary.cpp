@@ -1,24 +1,25 @@
 #include <laneDetector.hpp>
 
 cv::Mat applyCanny(cv::Mat &img, int debug) {
-    cv::Mat grayscale_image(img.rows, img.cols, CV_8UC1, cvScalarAll(0));
+    cv::Mat grayscale_image=img.clone();
     cv::Mat canny_image(img.rows, img.cols, CV_8UC1, cvScalarAll(0));
-    cv::cvtColor(img, grayscale_image, CV_BGR2GRAY);
+    //cv::cvtColor(img, grayscale_image, CV_BGR2GRAY);
     int minthreshold = 180, maxthreshold = 255;
-    if (debug == 3) {
-        cv::namedWindow("canny_control_box", 1);
-        cv::createTrackbar("minthreshold", "canny_control_box", &minthreshold, 255);
-        cv::createTrackbar("maxthreshold", "canny_control_box", &maxthreshold, 255);
-    }
-    do {
-        cv::Canny(grayscale_image, canny_image, minthreshold, maxthreshold, 3);
-        if (debug == 3) {
-            cv::imshow("canny_control_box", canny_image);
-        }
-        if (cv::waitKey(33) == 27)
-            break;
 
-    } while (debug == 3);
+
+    if(debug==22)
+    {
+      cv::namedWindow("canny_control_box", 1);
+      cv::createTrackbar("minthreshold", "canny_control_box", &minthreshold, 255);
+      cv::createTrackbar("maxthreshold", "canny_control_box", &maxthreshold, 255);
+      while(debug==22){
+        cv::Canny(grayscale_image, canny_image, minthreshold, maxthreshold, 3);
+        cv::imshow("canny_control_box", canny_image);
+        if (cv::waitKey(33) == 27)
+          break;
+      }
+    }
+    cv::Canny(grayscale_image, canny_image, minthreshold, maxthreshold, 3);
     return canny_image;
 } // converts the given image into a binary one using canny
 
@@ -48,7 +49,7 @@ cv::Mat applyHough(cv::Mat &img, int debug) {
 } // applying probablistic hough transformation on the canny image obtained
 
 cv::Mat applyThreshold(cv::Mat &img, int debug) {
-    int bin_threshold = 180;
+    int bin_threshold = 168;
 
     cv::Mat grayscale_image(img.rows, img.cols, CV_8UC1, cvScalarAll(0));
     cv::Mat threshold_image(img.rows, img.cols, CV_8UC1, cvScalarAll(0));
@@ -56,6 +57,13 @@ cv::Mat applyThreshold(cv::Mat &img, int debug) {
     if (debug == 4) {
         cv::namedWindow("threshold_control_box", 1);
         cv::createTrackbar("bin_threshold", "threshold_control_box", &bin_threshold, 255);
+        while(debug==4)
+        {
+          cv::inRange(img, cv::Scalar(bin_threshold, bin_threshold, bin_threshold), cv::Scalar(256, 256, 256), threshold_image);
+          cv::imshow("threshold_control_box",threshold_image);
+          if(cv::waitKey(33)=='q')
+            break;
+        }
     }
 
     cv::inRange(img, cv::Scalar(bin_threshold, bin_threshold, bin_threshold), cv::Scalar(256, 256, 256), threshold_image);
@@ -89,5 +97,6 @@ cv::Mat LaneDetector::getLaneBinary(cv::Mat &image) {
     cv::Mat hough_image(image.rows, image.cols, CV_8UC1, cvScalarAll(0));
     threshold_image = applyThreshold(image, debug_mode);
     hough_image = applyHough(threshold_image, debug_mode);
+    cv::Mat canny_image = applyCanny(hough_image,debug_mode);
     return hough_image;
 } // Detect lanes and return a binary image with Lanes only
