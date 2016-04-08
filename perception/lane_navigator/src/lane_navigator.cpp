@@ -51,7 +51,7 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
     center_point.x = 0, center_point.y = 0;
     double center_angle = 0.0;
     cdst = img;
-    cv::Canny(img, cdst, 25, 75, 3);
+    //cv::Canny(img, cdst, 25, 75, 3);
     cv::HoughLinesP(cdst, lines, 1, CV_PI / 180, 25, 15, 5);
     int image_halfy=0;
     cv::Point top(0,0), bottom(0,0);
@@ -105,7 +105,7 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
             break;
     }
     bottom.x/=20;
-    bottom.y/=200;
+    bottom.y/=20;
     bottom.y-=img.rows;
 
     for (int i = 0; i < lines.size(); i++) {
@@ -222,6 +222,7 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
                 rightCount++;
             }
         }
+        //std::cerr<<"left:"<<leftCount<<" right:"<<rightCount<<std::endl;
         if(leftCount!=0 && rightCount!=0){
             leftCenter.x /= leftCount; //Load when count==0
             leftCenter.y /= leftCount;
@@ -232,13 +233,17 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
 
             rightSlope /= rightCount;
             if ((center_point.x - leftCenter.x) < 50 || (leftCenter.x - center_point.x) < 50) {
-                center_point.x += 150; //Target must not lie on the lane
-                target.x = 150;
+                center_point.x += 200; //Target must not lie on the lane
+                target.x += 200;
             }
             if ((rightCenter.x - center_point.x) < 50 || (center_point.x - rightCenter.x) < 50) {
-                center_point.x = center_point.x - 150;
-                target.x -= 150;
+                center_point.x = center_point.x - 200;
+                target.x -= 200;
             }
+        }
+        else
+        {
+
         }
 
         proj.x = (bot_x + m * (bot_y - center_point.y) + m * m * center_point.x) / (1 + m * m); // Verified
@@ -273,16 +278,18 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
     }*/
     double valx=target_pose.x;
     double valy=target_pose.y;
+    double di=1;
     int valtheta=target_pose.theta;
     for(int i=0;i<counter;i++)
     {
-        valx+=(i+1)*(temp[i]).x;
-        valy+=(i+1)*(temp[i]).y;
-        valtheta+=(i+1)*(temp[i]).theta;
+        valx+=(i+2)*(temp[i]).x;
+        valy+=(i+2)*(temp[i]).y;
+        valtheta+=(i+2)*(temp[i]).theta;
+        di+=i+2;
     }
-    target_pose.x=int(valx/7);
-    target_pose.y=int(valy/7);
-    target_pose.theta=int(valtheta/7);
+    target_pose.x=int(valx/di);
+    target_pose.y=int(valy/di);
+    target_pose.theta=int(valtheta/di);
 
     target.x=target_pose.x;
     target.y=origin.y - target_pose.y;
@@ -296,8 +303,9 @@ geometry_msgs::Pose2D findTarget(cv::Mat img) {
         std::cout << "target.x: " << target.x << " target.y: " << target.y << std::endl;
         std::cout << "proj.x: " << proj.x << " " << "proj.y: " << proj.y << std::endl;
         //cv::line(mdst, proj, target, cv::Scalar(150),2,8);
+        ROS_INFO("%d, %d", target.x,target.y);
         cv::line(mdst, cv::Point(bot_x, bot_y), target, cv::Scalar(255), 2, 8);
-        cv::namedWindow("Center_path", cv::WINDOW_NORMAL);
+        cv::namedWindow("Center_path", cv::WINDOW_AUTOSIZE);
         cv::imshow("Center_path", mdst);
         // cv::waitKey(0);
     }
@@ -325,6 +333,15 @@ void publishTarget(const sensor_msgs::ImageConstPtr msg ) {
         temp[i]=temp1;
         temp1=temp2;
     }
+    if(debug==5)
+    {
+        msge.x=500;
+        msge.y=250;
+        msge.theta=0;
+    }
+    double temp11=msge.x/100;
+    msge.x=msge.y/100;
+    msge.y=5 -temp11;
     new_msg = convert_Pose2D_to_PoseStamped(msge);
     pub_point.publish(new_msg);
     if(debug)
