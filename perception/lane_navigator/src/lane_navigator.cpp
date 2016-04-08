@@ -341,7 +341,7 @@ void publishTarget(const sensor_msgs::ImageConstPtr msg ) {
     }
     double temp11=msge.x/100;
     msge.x=msge.y/100;
-    msge.y=5 -temp11;
+    msge.y=-5 +temp11;
     new_msg = convert_Pose2D_to_PoseStamped(msge);
     pub_point.publish(new_msg);
     if(debug)
