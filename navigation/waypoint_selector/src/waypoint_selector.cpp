@@ -130,6 +130,7 @@ geometry_msgs::Pose2D WaypointSelector::get_Pose2D_odom(sensor_msgs::NavSatFix c
     } catch (tf::TransformException ex) {
         ROS_ERROR("%s",ex.what());
     }
+
     tf::Vector3 vector_base_link = tf::Vector3(target_base_link.x , target_base_link.y , 0.0);
     tf::Vector3 vector_odom = transform(vector_base_link);
     target_odom.x = vector_odom.getX();
@@ -163,9 +164,6 @@ double WaypointSelector::getModgps(const sensor_msgs::NavSatFix a, const sensor_
     geometry_msgs::Pose2D target_odom;
     //geometry_msgs::Pose2D target_odom_b;
     target_odom= get_Pose2D_odom(a, b);
-
-   // target_odom_b = get_Pose2D_odom(current_gps_position_, b);
-
 
     //std::cout << "position of target: " << target_odom.x << ", " << target_odom.y << std::endl;
     //std::cout << "bot position: " << current_ekf_position_.pose.pose.position.x << ", " << current_ekf_position_.pose.pose.position.y << std::endl << std::endl;
