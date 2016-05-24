@@ -1,26 +1,10 @@
 footprint: [[-0.20, 0.40], [1.35, 0.40], [1.35, -0.40], [-0.20, -0.40]]
 obstacle_layer:
    observation_sources: scan lanes
-   scan: 
-#      sensor_frame: /laser
-      data_type: LaserScan
-      topic: /scan
-      marking: true
-      clearing: true
-      expected_update_rate: 0.20
-   obstacle_range: 9.0
-   raytrace_range: 10.0
-   enabled: true
-
-   lanes:
-	sensor_frame:base_link
-	data_type: PointCloud2
-	topic:/cloud_data
-	marking: true
-	clearing: false
-	 
-
-inflation_layer:
+   scan: {data_type: LaserScan, topic: /scan, marking: true, clearing: true, expected_update_rate: 0.20, obstacle_range: 9.0, obstacle_range: 9.0, raytrace_range: 10.0, enabled: true}  
+   lanes: {sensor_frame: base_link, data_type: PointCloud2, topic: /cloud_data, marking: true, clearing: false}
+  
+inflation_layer: 
    inflation_radius: 0.65
    enabled: true
 
