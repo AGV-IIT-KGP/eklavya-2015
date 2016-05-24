@@ -1,0 +1,24 @@
+global_costmap:
+   global_frame: odom
+   robot_base_frame: base_link
+   update_frequency: 3.0
+   publish_frequency: 1.0
+   static_map: false
+   transform_tolerance: 0.5
+   resolution: 0.2
+   width:  50.0
+   height: 50.0
+   rolling_window: true
+   plugins:
+      - name: obstacle_layer
+        type: "costmap_2d::ObstacleLayer"
+      - name: footprint_layer
+        type: "costmap_2d::FootprintLayer"
+      - name: inflation_layer
+        type: "costmap_2d::InflationLayer"
+
+   obstacle_layer:
+    scan:
+      sensor_frame: laser
+      topic: /scan
+      data_type: LaserScan
