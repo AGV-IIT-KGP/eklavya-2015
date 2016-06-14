@@ -67,4 +67,6 @@ private:
     void setupComms(); // Set up ros communication
 };
 
+cv::Mat applyThreshold(cv::Mat &img, int debug);
+
 #endif /* _LANE_DETECTOR_HPP_ */
