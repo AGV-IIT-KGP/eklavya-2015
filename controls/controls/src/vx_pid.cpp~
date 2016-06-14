@@ -96,11 +96,7 @@ void VxPid::implementPid(int argc, char** argv)
 
 	ros::NodeHandle nh_;
 	ros::Publisher va_pub = nh_.advertise<std_msgs::Float64>("va", 100);
-
-	ros::Publisher pub=nh_.advertise<geometry_msgs::Twist>("twist_msg", 100);	
-
-
-ros::Subscriber Override_Subscriber = nh_.subscribe<geometry_msgs::Twist>("target_pose", 5,&VxPid::vxTargetUpdateCallback, this);
+	ros::Subscriber Override_Subscriber = nh_.subscribe<geometry_msgs::Twist>("target_pose", 5,&VxPid::vxTargetUpdateCallback, this);
 	//ros::Subscriber Alpha_Actual_Subscriber = nh_.subscribe<std_msgs::Float64>("alpha_val_actual" , 5 , Alpha_actual_callback);
 	ros::Subscriber Encoder_Subscriber = nh_.subscribe<geometry_msgs::Twist>("encoders", 5, &VxPid::encoderCallback, this);
 																	
@@ -179,30 +175,21 @@ int t,bit;
 
 		printf(" G_PWM: %3.3f \n ", PWM_Duty_Cycle); 
 		
-		/*file0 = fopen("/dev/serial/by-id/usb-Arduino__www.arduino.cc__Arduino_Due_Prog._Port_55432333138351D09122-if00","w");
+		file0 = fopen("/dev/serial/by-id/usb-Arduino__www.arduino.cc__Arduino_Due_Prog._Port_55432333138351D09122-if00","w");
 		fprintf(file0,"%d",(int)PWM_Duty_Cycle);
-		fprintf(file0,"%c",'@');*/
-		
-		int value;		
+		fprintf(file0,"%c",'@');
 		manualmode_lock.lock();
 		if(manualmode==1)
 		{
-			value=1;
+			fprintf(file0,"%c",'m');
 		}
 		else if(manualmode==0)
 		{
-			value=0;
+			fprintf(file0,"%c",'a');
 		}
 		manualmode_lock.unlock();
-		//fclose(file0);*/
+		fclose(file0);
 		
-		geometry_msgs::Twist msg;
-		
-		msg.linear.x=(int)PWM_Duty_Cycle;  // adding pwm value to x 
-		msg.angular.y=value;// adding manual or automatic value to y
-
-		pub.publish(msg);
-
 		ros::spinOnce();
 
 		loop_rate.sleep();
